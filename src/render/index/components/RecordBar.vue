@@ -1,23 +1,29 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const recordingStatus = ref(false)
 
-async function startRecording() {
+function startRecording() {
   console.log('start recording')
   // start recording
-  const [err] = await window.useRecord.start()
-  if (err)
-    console.error(err)
+  window.useRecord.start()
+    .then(() => {})
+    .catch(err => console.error(err))
 }
 
-async function stopRecording() {
+function stopRecording() {
   console.log('stop recording')
   // stop recording
-  const [err] = await window.useRecord.stop()
-  if (err)
-    console.error(err)
+  window.useRecord.stop()
+    .then(() => {})
+    .catch(err => console.error(err))
 }
+
+onMounted(() => {
+  window.useRecord.onChangeIcon((status: boolean) => {
+    recordingStatus.value = status
+  })
+})
 </script>
 
 <template>

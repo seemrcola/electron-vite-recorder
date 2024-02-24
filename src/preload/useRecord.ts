@@ -2,21 +2,26 @@ import { contextBridge, ipcRenderer } from 'electron'
 
 export function useRecord() {
   const api = {
-    start: async () => {
-      try {
-        await ipcRenderer.invoke('start')
-        // 如果没有错误 就回传一个 ok
-        return [null, 'ok']
-      }
-      catch (err) {
-        return [err, null]
-      }
+    start: () => {
+      return ipcRenderer.invoke('start')
     },
-    stop: async () => {
-      await ipcRenderer.invoke('stop')
+    startRecord: () => {
+      return ipcRenderer.invoke('startRecord')
     },
-    destroy: async () => {
-      await ipcRenderer.invoke('destroy')
+    stop: () => {
+      return ipcRenderer.invoke('stop')
+    },
+    hide: () => {
+      return ipcRenderer.invoke('hide')
+    },
+    message: ({ type, msg }: { type: string, msg: any }) => {
+      console.log('准备发送消息')
+      ipcRenderer.send('message', { type, msg })
+    },
+    onChangeIcon: (cb: (msg: any) => void) => {
+      ipcRenderer.on('changeIcon', (event, msg) => {
+        cb(msg)
+      })
     },
   }
 

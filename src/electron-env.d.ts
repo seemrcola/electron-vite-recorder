@@ -22,8 +22,11 @@ interface Window {
   }
   // expose in the `electron/preload/useRecord.ts`
   useRecord: {
-    start: () => Promise<[Error, any]>
-    stop: () => Promise<[Error, any]>
-    destroy: () => Promise<[Error, any]>
+    start: () => Promise<any>
+    startRecord: () => Promise<any>
+    stop: () => Promise<any>
+    hide: () => Promise<any>
+    message: ({ type: string, msg: any }) => Promise<void>
+    onChangeIcon: (cb: (msg: any) => void) => void
   }
 }

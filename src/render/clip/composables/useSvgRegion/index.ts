@@ -1,5 +1,5 @@
 import type { App } from 'vue'
-import { createApp } from 'vue'
+import { createApp, ref } from 'vue'
 import useRecordTipTemp from './useRecordTipTemp.vue'
 import useSvgRegionTemp from './useSvgRegionTemp.vue'
 
@@ -21,12 +21,16 @@ export function useSvgRegion() {
     svg = document.querySelector('#mask-svg') as SVGSVGElement // 这个名称是useSvgRegionTemp.vue中定义的 算是写死的
     document.addEventListener('mousedown', startRegion)
 
-    document.addEventListener('keydown', async (e) => {
-      if (e.key === 'Escape') {
-        // 销毁窗口
-        await window.useRecord.destroy()
-      }
-    })
+    document.addEventListener(
+      'keydown',
+      async (e) => {
+        if (e.key === 'Escape') {
+          // 隐藏
+          await window.useRecord.hide()
+        }
+      },
+      // { once: true },
+    )
   }
 
   function startRegion(e: MouseEvent) {
@@ -224,7 +228,24 @@ export function useSvgRegion() {
       recordBoxDom?.remove()
     }
 
-    recordBox = createApp(useRecordTipTemp)
+    const currentRecorderType = ref<'window' | 'select'>('window')
+    recordBox = createApp(useRecordTipTemp, {
+      currentRecorderType,
+      startRecord: () => {
+        window.useRecord.startRecord()
+          .then(() => {
+            // 首先根据全屏录制还是区域录制来判断是否需要隐藏窗口
+            if (currentRecorderType.value === 'window')
+              window.useRecord.hide()
+            // 其次需要通知index入口的页面来进行图标的改变
+            window.useRecord.message({
+              type: 'change-icon',
+              msg: 'recording',
+            })
+          })
+          .catch(err => console.error(err))
+      },
+    })
     recordBoxDom = document.createElement('div')
     recordBox.mount(recordBoxDom)
 
