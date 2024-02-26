@@ -53,6 +53,7 @@ async function createWindow() {
     height: 240,
     x: 1400,
     y: 100,
+    title: 'User Recorder',
     alwaysOnTop: true,
     show: true,
     autoHideMenuBar: true,
@@ -60,6 +61,7 @@ async function createWindow() {
     frame: false,
     hasShadow: false,
     transparent: true,
+    resizable: false, // 禁止缩放
     backgroundColor: '#00000000',
     webPreferences: {
       preload,
@@ -74,7 +76,7 @@ async function createWindow() {
   // drag
   useDrag(win)
   // record
-  useRecord(clipWindow)
+  useRecord(clipWindow, win)
 
   if (process.env.VITE_DEV_SERVER_URL) {
     await win.loadURL(url)

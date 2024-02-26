@@ -40,7 +40,7 @@ function changeRecorderType(type: string) {
           />
         </template>
         <div>抓取范围</div>
-      </ntooltip>
+      </Ntooltip>
     </div>
     <div ml-4>
       <NButton bg="dark" text-light size="small" @click="props.startRecord">

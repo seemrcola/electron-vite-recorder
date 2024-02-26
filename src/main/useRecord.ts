@@ -8,7 +8,7 @@ import { getPlatform } from './utils'
 let recorderProcess: ChildProcessWithoutNullStreams
 
 // use ffmpeg to start recording
-export async function useRecord(win: BrowserWindow) {
+export async function useRecord(win: BrowserWindow, userRecorderWin: BrowserWindow) {
   const platform = getPlatform()
 
   ipcMain.handle('start', () => {
@@ -58,7 +58,9 @@ export async function useRecord(win: BrowserWindow) {
   ipcMain.on('message', (event, { type, msg }) => {
     // 发送给 摄像头的渲染进程 改变icon状态
     console.log('message', type, msg)
-    if (type === 'change-icon')
-      event.sender.send('changeIcon', msg === 'recording')
+    if (type === 'change-icon') {
+      // 给user recorder渲染进程发送消息
+      userRecorderWin.webContents.send('change-icon', msg)
+    }
   })
 }

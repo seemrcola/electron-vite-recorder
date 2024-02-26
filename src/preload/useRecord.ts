@@ -15,11 +15,12 @@ export function useRecord() {
       return ipcRenderer.invoke('hide')
     },
     message: ({ type, msg }: { type: string, msg: any }) => {
-      console.log('准备发送消息')
       ipcRenderer.send('message', { type, msg })
     },
+
+    // 主进程给渲染进程发送消息
     onChangeIcon: (cb: (msg: any) => void) => {
-      ipcRenderer.on('changeIcon', (event, msg) => {
+      ipcRenderer.on('change-icon', (event, msg) => {
         cb(msg)
       })
     },

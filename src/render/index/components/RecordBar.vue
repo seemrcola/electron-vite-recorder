@@ -1,50 +1,43 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
+import { NTooltip } from 'naive-ui'
 
 const recordingStatus = ref(false)
 
-function startRecording() {
+function toggleRecording(status: 'start' | 'stop') {
   console.log('start recording')
   // start recording
-  window.useRecord.start()
+  window.useRecord[status]()
     .then(() => {})
     .catch(err => console.error(err))
 }
 
-function stopRecording() {
-  console.log('stop recording')
-  // stop recording
-  window.useRecord.stop()
-    .then(() => {})
-    .catch(err => console.error(err))
-}
-
-onMounted(() => {
-  window.useRecord.onChangeIcon((status: boolean) => {
-    recordingStatus.value = status
-  })
+window.useRecord.onChangeIcon((status: boolean) => {
+  recordingStatus.value = status
 })
 </script>
 
 <template>
-  <div
-    class="fade-in"
-    rounded-full
-    absolute bottom-2 x-center z-max
-    cursor-pointer
-  >
-    <div
-      v-if="!recordingStatus"
-      class="i-ic:baseline-not-started icon hover:scale-110 transition-300"
-      h-8 w-8 text-light
-      @click="startRecording"
-    />
-    <div
-      v-else
-      class="i-material-symbols:stop-circle-outline icon hover:scale-110 transition-300"
-      h-8 w-8 text-red-5
-      @click="stopRecording"
-    />
+  <div>
+    <NTooltip placement="bottom" trigger="hover">
+      <template #trigger>
+        <div
+          class="fade-in hover:scale-110 transition-300"
+          rounded-full
+          absolute bottom-2 x-center z-max
+          cursor-pointer
+          bg-orange-4 p-1
+        >
+          <div
+            class="i-file-icons:fortherecord icon"
+            h-6 w-6 text-light
+            :class="{ 'text-red-5': recordingStatus }"
+            @click="e => toggleRecording(recordingStatus ? 'stop' : 'start')"
+          />
+        </div>
+      </template>
+      <div>{{ recordingStatus ? '结束录制' : '开始录制' }}</div>
+    </NTooltip>
   </div>
 </template>
 

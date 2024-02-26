@@ -40,6 +40,7 @@ export async function useClipWindow() {
   const childWindow = new BrowserWindow({
     width,
     height,
+    title: 'FFMPEG Recorder',
     show: false,
     autoHideMenuBar: true,
     useContentSize: true,
