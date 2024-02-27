@@ -5,8 +5,6 @@ import { NTooltip } from 'naive-ui'
 const recordingStatus = ref(false)
 
 function toggleRecording(status: 'start' | 'stop') {
-  console.log('start recording')
-  // start recording
   window.useRecord[status]()
     .then(() => {})
     .catch(err => console.error(err))
@@ -19,7 +17,7 @@ window.useRecord.onChangeIcon((status: boolean) => {
 
 <template>
   <div>
-    <NTooltip placement="bottom" trigger="hover">
+    <NTooltip trigger="hover">
       <template #trigger>
         <div
           class="fade-in hover:scale-110 transition-300"
@@ -30,7 +28,7 @@ window.useRecord.onChangeIcon((status: boolean) => {
         >
           <div
             class="i-file-icons:fortherecord icon"
-            h-6 w-6 text-light
+            h-5 w-5 text-light
             :class="{ 'text-red-5': recordingStatus }"
             @click="e => toggleRecording(recordingStatus ? 'stop' : 'start')"
           />

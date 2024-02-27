@@ -5,32 +5,31 @@ import useSvgRegionTemp from './useSvgRegionTemp.vue'
 
 export function useSvgRegion() {
   let svg: SVGSVGElement // svg 获取到这个名称是useSvgRegionTemp中的svg-mask
+  let drag: SVGRectElement // drag-rect 用于拖拽
+  let hole: SVGRectElement // svg mask 挖出来的洞
   let tip: HTMLElement // resize的提示
   let recordBox: App<Element> // 录制的提示盒子 即recordTipTemp.vue组件createApp的返回值
   let recordBoxDom: HTMLElement // 录制的提示盒子的dom
-  let drag: SVGRectElement // drag-rect 用于拖拽
-  let hole: SVGRectElement // svg mask 挖出来的洞
+
   let __start = false
   let __start_drag = false
   let __drag_mode: 'move' | 'resize' = 'move'
   let startPoint = { x: 0, y: 0 }
   let startDragPoint = { x: 0, y: 0 }
 
+  async function escCallback(e: KeyboardEvent) {
+    if (e.key === 'Escape') {
+      // 隐藏
+      await window.useRecord.hide()
+    }
+  }
+
   function start() {
     createFullScreenSvg()
     svg = document.querySelector('#mask-svg') as SVGSVGElement // 这个名称是useSvgRegionTemp.vue中定义的 算是写死的
     document.addEventListener('mousedown', startRegion)
 
-    document.addEventListener(
-      'keydown',
-      async (e) => {
-        if (e.key === 'Escape') {
-          // 隐藏
-          await window.useRecord.hide()
-        }
-      },
-      // { once: true },
-    )
+    document.addEventListener('keydown', escCallback)
   }
 
   function startRegion(e: MouseEvent) {
@@ -235,13 +234,20 @@ export function useSvgRegion() {
         window.useRecord.startRecord()
           .then(() => {
             // 首先根据全屏录制还是区域录制来判断是否需要隐藏窗口
-            if (currentRecorderType.value === 'window')
+            if (currentRecorderType.value === 'window') {
               window.useRecord.hide()
+            }
+            else {
+              // 需要删掉各种提示框
+              tip?.remove()
+              recordBoxDom?.remove()
+              // 去掉esc按钮的监听
+              document.removeEventListener('keydown', escCallback)
+              // 告诉窗口让它变成可穿透窗口
+              window.useRecord.transparentClipWin()
+            }
             // 其次需要通知index入口的页面来进行图标的改变
-            window.useRecord.message({
-              type: 'change-icon',
-              msg: 'recording',
-            })
+            window.useRecord.message({ type: 'change-icon', msg: 'recording' })
           })
           .catch(err => console.error(err))
       },

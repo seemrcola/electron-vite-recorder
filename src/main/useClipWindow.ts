@@ -61,7 +61,7 @@ export async function useClipWindow() {
   // 设置窗口在所有工作区都可见
   childWindow.setVisibleOnAllWorkspaces(true)
   // 最上层
-  childWindow.setAlwaysOnTop(process.env.NODE_ENV !== 'development', 'screen-saver')
+  childWindow.setAlwaysOnTop(true, 'screen-saver')
 
   if (process.env.VITE_DEV_SERVER_URL) {
     await childWindow.loadURL(`${url}clip.html`)

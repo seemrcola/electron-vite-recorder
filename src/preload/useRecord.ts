@@ -14,6 +14,9 @@ export function useRecord() {
     hide: () => {
       return ipcRenderer.invoke('hide')
     },
+    transparentClipWin: () => {
+      return ipcRenderer.invoke('transparentClipWin')
+    },
     message: ({ type, msg }: { type: string, msg: any }) => {
       ipcRenderer.send('message', { type, msg })
     },

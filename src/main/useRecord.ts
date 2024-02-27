@@ -12,7 +12,6 @@ export async function useRecord(win: BrowserWindow, userRecorderWin: BrowserWind
   const platform = getPlatform()
 
   ipcMain.handle('start', () => {
-    console.log('start')
     win.show()
   })
 
@@ -53,6 +52,11 @@ export async function useRecord(win: BrowserWindow, userRecorderWin: BrowserWind
   ipcMain.handle('hide', () => {
     // 开始录制前可隐藏窗口
     win.hide()
+  })
+
+  ipcMain.handle('transparentClipWin', () => {
+    // 设置窗口为可穿透
+    win.setIgnoreMouseEvents(true)
   })
 
   ipcMain.on('message', (event, { type, msg }) => {
