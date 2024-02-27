@@ -17,6 +17,11 @@ export function useSvgRegion() {
   let startPoint = { x: 0, y: 0 }
   let startDragPoint = { x: 0, y: 0 }
 
+  window.useRecord.onCloseWin((msg) => {
+    console.log(msg)
+    // todo 这里可能会有某些关闭窗口的操作 目前没有
+  })
+
   async function escCallback(e: KeyboardEvent) {
     if (e.key === 'Escape') {
       // 隐藏

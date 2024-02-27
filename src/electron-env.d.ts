@@ -29,5 +29,6 @@ interface Window {
     message: ({ type: string, msg: any }) => Promise<void>
     transparentClipWin: () => Promise<any>
     onChangeIcon: (cb: (msg: any) => void) => void
+    onCloseWin: (cb: (msg: any) => void) => void
   }
 }

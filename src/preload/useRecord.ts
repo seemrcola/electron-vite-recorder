@@ -27,6 +27,11 @@ export function useRecord() {
         cb(msg)
       })
     },
+    onCloseWin: (cb: (msg: any) => void) => {
+      ipcRenderer.on('close-win', (event, msg) => {
+        cb(msg)
+      })
+    },
   }
 
   contextBridge.exposeInMainWorld('useRecord', api)

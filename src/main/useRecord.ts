@@ -8,11 +8,11 @@ import { getPlatform } from './utils'
 let recorderProcess: ChildProcessWithoutNullStreams
 
 // use ffmpeg to start recording
-export async function useRecord(win: BrowserWindow, userRecorderWin: BrowserWindow) {
+export async function useRecord(userClipWin: BrowserWindow, userRecorderWin: BrowserWindow) {
   const platform = getPlatform()
 
   ipcMain.handle('start', () => {
-    win.show()
+    userClipWin.show()
   })
 
   ipcMain.handle('startRecord', () => {
@@ -43,20 +43,21 @@ export async function useRecord(win: BrowserWindow, userRecorderWin: BrowserWind
   ipcMain.handle('stop', () => {
     kill(recorderProcess.pid as number, 'SIGINT', (err) => {
       if (err)
-        console.log(err)
-      else
-        console.log('recorder process killed')
+        return console.log(`[recorder error]:${err}`)
+      userClipWin.webContents.send('close-win')
+      // 关闭窗口
+      userClipWin.destroy()
     })
   })
 
   ipcMain.handle('hide', () => {
     // 开始录制前可隐藏窗口
-    win.hide()
+    userClipWin.hide()
   })
 
   ipcMain.handle('transparentClipWin', () => {
     // 设置窗口为可穿透
-    win.setIgnoreMouseEvents(true)
+    userClipWin.setIgnoreMouseEvents(true)
   })
 
   ipcMain.on('message', (event, { type, msg }) => {
