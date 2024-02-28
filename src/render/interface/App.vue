@@ -1,9 +1,9 @@
 <script setup lang="ts">
-
+import Layout from './layouts/index.vue'
 </script>
 
 <template>
-  <div>hello screen</div>
+  <Layout h-full w-full />
 </template>
 
 <style scoped>

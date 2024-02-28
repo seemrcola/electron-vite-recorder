@@ -29,7 +29,7 @@
   "devDependencies": {
     "@antfu/eslint-config": "^2.6.3",
     "@vitejs/plugin-vue": "^5.0.1",
-    "electron": "^29.0.1",
+    "electron": "^29.1.0",
     "electron-builder": "^24.9.1",
     "eslint": "^8.56.0",
     "naive-ui": "^2.37.3",

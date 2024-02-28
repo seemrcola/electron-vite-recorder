@@ -2,8 +2,9 @@ import { release } from 'node:os'
 import * as process from 'node:process'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { BrowserWindow, app, ipcMain, shell } from 'electron'
+import { BrowserWindow, app, ipcMain, screen, shell } from 'electron'
 import { useClipWindow } from './useClipWindow'
+import { useInterfaceWindow } from './useInterfaceWindow'
 
 import { shim } from './utils'
 import { useDrag } from './useDrag'
@@ -47,11 +48,17 @@ const preload = join(__dirname, '../preload/index.mjs')
 const url = process.env.VITE_DEV_SERVER_URL
 const indexHtml = join(process.env.DIST, 'index.html')
 
+function getSize() {
+  const { size, scaleFactor } = screen.getPrimaryDisplay()
+  return [size.width * scaleFactor, size.height * scaleFactor]
+}
+
 async function createWindow() {
+  const [width, _] = getSize()
   win = new BrowserWindow({
     width: 240,
     height: 240,
-    x: 1400,
+    x: width - 240,
     y: 100,
     title: 'User Recorder',
     alwaysOnTop: true,
@@ -70,6 +77,8 @@ async function createWindow() {
 
   // clipWindow
   const clipWindow = await useClipWindow()
+  // interfaceWindow
+  useInterfaceWindow()
 
   // keep ratio
   win.setAspectRatio(1)
