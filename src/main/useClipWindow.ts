@@ -47,6 +47,7 @@ export async function useClipWindow() {
     resizable: false,
     fullscreen: platform === 'win',
     transparent: true,
+    simpleFullscreen: true,
     backgroundColor: '#00000000',
     webPreferences: {
       preload,
@@ -56,7 +57,7 @@ export async function useClipWindow() {
   // 设置窗口在所有工作区都可见
   childWindow.setVisibleOnAllWorkspaces(true)
   // 最上层
-  childWindow.setAlwaysOnTop(false, 'screen-saver')
+  childWindow.setAlwaysOnTop(true, 'screen-saver')
 
   if (process.env.VITE_DEV_SERVER_URL) {
     await childWindow.loadURL(`${url}clip.html`)
