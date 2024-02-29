@@ -42,15 +42,10 @@ export async function useClipWindow() {
     height,
     title: 'FFMPEG Recorder',
     show: false,
-    autoHideMenuBar: true,
-    useContentSize: true,
     movable: false,
     frame: false,
     resizable: false,
-    hasShadow: false,
-    fullscreenable: true,
     fullscreen: platform === 'win',
-    simpleFullscreen: true,
     transparent: true,
     backgroundColor: '#00000000',
     webPreferences: {
@@ -61,7 +56,7 @@ export async function useClipWindow() {
   // 设置窗口在所有工作区都可见
   childWindow.setVisibleOnAllWorkspaces(true)
   // 最上层
-  childWindow.setAlwaysOnTop(true, 'screen-saver')
+  childWindow.setAlwaysOnTop(false, 'screen-saver')
 
   if (process.env.VITE_DEV_SERVER_URL) {
     await childWindow.loadURL(`${url}clip.html`)

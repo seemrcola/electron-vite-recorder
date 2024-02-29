@@ -11,6 +11,14 @@ export function useSvgRegion() {
   let recordBox: App<Element> // 录制的提示盒子 即recordTipTemp.vue组件createApp的返回值
   let recordBoxDom: HTMLElement // 录制的提示盒子的dom
 
+  const WINDOW_WIDTH = window.innerWidth // 窗口宽度
+  const WINDOW_HEIGHT = window.innerHeight // 窗口高度
+  // 屏幕当前缩放比例
+  const scale = window.devicePixelRatio
+  // 屏幕的实际宽高
+  const SCREEN_WIDTH = WINDOW_WIDTH / scale
+  const SCREEN_HEIGHT = WINDOW_HEIGHT / scale
+
   let __start = false
   let __start_drag = false
   let __drag_mode: 'move' | 'resize' = 'move'
@@ -93,7 +101,7 @@ export function useSvgRegion() {
     const { x, y, width, height } = hole.getBBox()
     // 计算出鼠标到矩形右下角的距离
     const dist = Math.sqrt((x + width - clientX) ** 2 + (y + height - clientY) ** 2) // 右下角
-    if (dist > 10)
+    if (dist > 16)
       __drag_mode = 'move'
     else
       __drag_mode = 'resize'
@@ -108,10 +116,25 @@ export function useSvgRegion() {
     const dy = clientY - startDragPoint.y
 
     if (__drag_mode === 'move') {
-      drag.setAttribute('x', `${Number(drag.getAttribute('x')) + dx}`)
-      drag.setAttribute('y', `${Number(drag.getAttribute('y')) + dy}`)
-      hole.setAttribute('x', `${Number(hole.getAttribute('x')) + dx}`)
-      hole.setAttribute('y', `${Number(hole.getAttribute('y')) + dy}`)
+      // 如果达到边界了就不再移动
+      const x = Number(drag.getAttribute('x'))
+      const y = Number(drag.getAttribute('y'))
+      let movex = x + dx
+      let movey = y + dy
+
+      // 如果达到上边界
+      movey = Math.max(0, movey)
+      // 如果达到左边界
+      movex = Math.max(0, movex)
+      // 如果达到右边界
+      movex = Math.min(movex, SCREEN_WIDTH - Number(drag.getAttribute('width')))
+      // 如果达到下边界
+      movey = Math.min(movey, SCREEN_HEIGHT - Number(drag.getAttribute('height')))
+
+      drag.setAttribute('x', `${movex}`)
+      drag.setAttribute('y', `${movey}`)
+      hole.setAttribute('x', `${movex}`)
+      hole.setAttribute('y', `${movey}`)
     }
     if (__drag_mode === 'resize') {
       // 小于0的时候不变
@@ -218,7 +241,7 @@ export function useSvgRegion() {
       border-radius: 4px;
       color: #fff;
     `
-    tip.textContent = '⬇️ 可拖拽该点改变大小'
+    tip.textContent = '↖️ 可拖拽该点改变大小'
     // 找到drag的位置
     const { x, y, width, height } = hole.getBBox()
     tip.style.left = `${x + width}px`
@@ -264,9 +287,9 @@ export function useSvgRegion() {
 
     recordBoxDom.style.cssText = `
       position: fixed;
-      top: ${holeRect.y + holeRect.height + 10}px;
+      top: ${holeRect.y + holeRect.height - 10}px;
       left: ${holeRect.x + holeRect.width / 2}px;
-      transform: translate(-50%, 0);
+      transform: translate(-50%, -100%);
       z-index: 9999;
       background-color: rgb(29, 29, 29);
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
