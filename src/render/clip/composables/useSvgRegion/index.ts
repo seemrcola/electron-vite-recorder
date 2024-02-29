@@ -129,7 +129,9 @@ export function useSvgRegion() {
       // 如果达到右边界
       movex = Math.min(movex, SCREEN_WIDTH - Number(drag.getAttribute('width')))
       // 如果达到下边界
-      movey = Math.min(movey, SCREEN_HEIGHT - Number(drag.getAttribute('height')))
+      // fixme mac无法真正全屏
+      const shim = window.navigator.platform.includes('Mac') ? 50 : 0
+      movey = Math.min(movey, SCREEN_HEIGHT - Number(drag.getAttribute('height')) - shim)
 
       drag.setAttribute('x', `${movex}`)
       drag.setAttribute('y', `${movey}`)
@@ -208,7 +210,7 @@ export function useSvgRegion() {
     dragRect.setAttribute('fill', 'transparent')
     // 加个虚线边框
     dragRect.setAttribute('stroke', 'orange')
-    dragRect.setAttribute('stroke-width', '2')
+    dragRect.setAttribute('stroke-width', '1')
     dragRect.setAttribute('stroke-dasharray', '5 5')
 
     svg.appendChild(dragRect)
