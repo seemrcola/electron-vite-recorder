@@ -226,8 +226,6 @@ export function useSvgRegion() {
       position: absolute;
       width: 150px;
       height:20px;
-      right: 0;
-      bottom: 0;
       padding: 2px 0;
       display: flex;
       justify-content: center;
