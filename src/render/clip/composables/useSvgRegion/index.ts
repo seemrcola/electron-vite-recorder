@@ -32,6 +32,9 @@ export function useSvgRegion() {
     hole.setAttribute('stroke', 'black')
     // 将drag的虚线还原
     drag.setAttribute('stroke', 'orange')
+    // 渲染提示框
+    resizeTip()
+    recordTip()
   })
 
   async function escCallback(e: KeyboardEvent) {
