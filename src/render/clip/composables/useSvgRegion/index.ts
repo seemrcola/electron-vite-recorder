@@ -35,6 +35,8 @@ export function useSvgRegion() {
     // 渲染提示框
     resizeTip()
     recordTip()
+    // 添加回来esc按钮的监听
+    document.addEventListener('keydown', escCallback)
   })
 
   async function escCallback(e: KeyboardEvent) {
