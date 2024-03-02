@@ -62,8 +62,10 @@ export async function useRecord(userClipWin: BrowserWindow, userRecorderWin: Bro
       if (err)
         return console.log(`[recorder error]:${err}`)
       userClipWin.webContents.send('close-win')
+      // 将窗口不再设置成可穿透
+      userClipWin.setIgnoreMouseEvents(false)
       // 关闭窗口
-      userClipWin.destroy()
+      userClipWin.hide()
       // 在进程成功关闭之后 通知icon改变 给user recorder渲染进程发送消息
       userRecorderWin.webContents.send('change-icon', false)
     })

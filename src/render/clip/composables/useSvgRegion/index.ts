@@ -27,7 +27,11 @@ export function useSvgRegion() {
 
   window.useRecord.onCloseWin((msg) => {
     console.log(msg)
-    // todo 这里可能会有某些关闭窗口的操作 目前没有
+    // 还原颜色以便于下一次打开的时候颜色正常
+    // 将svg的颜色还原
+    hole.setAttribute('stroke', 'black')
+    // 将drag的虚线还原
+    drag.setAttribute('stroke', 'orange')
   })
 
   async function escCallback(e: KeyboardEvent) {
@@ -269,6 +273,12 @@ export function useSvgRegion() {
           width: Number(hole.getAttribute('width')) * scale + 2 * scale,
           height: Number(hole.getAttribute('height')) * scale + 2 * scale + shim * scale,
         }
+        // 去掉hole的边框颜色
+        hole.setAttribute('stroke', 'transparent')
+        // 去掉drag的虚线
+        drag.setAttribute('stroke', 'transparent')
+
+        // 开始录制
         window.useRecord.startRecord(recordOptions)
           .then(() => {
             // 首先根据全屏录制还是区域录制来判断是否需要隐藏窗口
