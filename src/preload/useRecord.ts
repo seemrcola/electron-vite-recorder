@@ -5,8 +5,8 @@ export function useRecord() {
     start: () => {
       return ipcRenderer.invoke('start')
     },
-    startRecord: () => {
-      return ipcRenderer.invoke('startRecord')
+    startRecord: (recordOptions: RecordOptions) => {
+      return ipcRenderer.invoke('startRecord', recordOptions)
     },
     stop: () => {
       return ipcRenderer.invoke('stop')

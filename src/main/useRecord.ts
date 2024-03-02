@@ -15,12 +15,16 @@ export async function useRecord(userClipWin: BrowserWindow, userRecorderWin: Bro
     userClipWin.show()
   })
 
-  ipcMain.handle('startRecord', () => {
+  ipcMain.handle('startRecord', (e, recordOptions: RecordOptions) => {
     const filename = `${new Date().getTime()}.mp4`
     let ffmpeg_command = ''
 
+    // 宽高/坐标 以及屏幕缩放比例
+    const { width, height, x, y } = recordOptions
+
     if (platform === 'mac') {
-      ffmpeg_command = `
+      if (recordOptions.fullScreen) {
+        ffmpeg_command = `
         ffmpeg -f avfoundation \
         -capture_cursor 1 \
         -i "1" \
@@ -28,6 +32,19 @@ export async function useRecord(userClipWin: BrowserWindow, userRecorderWin: Bro
         -r 30 \
         -preset ultrafast ~/desktop/${filename}
       `
+      }
+      else {
+        ffmpeg_command = `
+        ffmpeg -f avfoundation \
+        -capture_cursor 1 \
+        -i "1" \
+        -video_size ${width}x${height} \
+        -vf "crop=${width}:${height}:${x}:${y}" \
+        -c:v libx264 \
+        -r 30 \
+        -preset ultrafast ~/desktop/${filename}
+      `
+      }
     }
     if (platform === 'win') {
       // todo windows
@@ -47,6 +64,8 @@ export async function useRecord(userClipWin: BrowserWindow, userRecorderWin: Bro
       userClipWin.webContents.send('close-win')
       // 关闭窗口
       userClipWin.destroy()
+      // 在进程成功关闭之后 通知icon改变 给user recorder渲染进程发送消息
+      userRecorderWin.webContents.send('change-icon', false)
     })
   })
 
@@ -65,7 +84,7 @@ export async function useRecord(userClipWin: BrowserWindow, userRecorderWin: Bro
     console.log('message', type, msg)
     if (type === 'change-icon') {
       // 给user recorder渲染进程发送消息
-      userRecorderWin.webContents.send('change-icon', msg)
+      userRecorderWin.webContents.send('change-icon', msg as boolean) // change-icon 的 msg 是 boolean
     }
   })
 }

@@ -1,5 +1,13 @@
 /// <reference types="vite-plugin-electron/electron-env" />
 
+declare interface RecordOptions {
+  x: number
+  y: number
+  width: number
+  height: number
+  fullScreen: boolean
+}
+
 declare namespace NodeJS {
   interface ProcessEnv {
     VSCODE_DEBUG?: 'true'
@@ -23,7 +31,7 @@ interface Window {
   // expose in the `electron/preload/useRecord.ts`
   useRecord: {
     start: () => Promise<any>
-    startRecord: () => Promise<any>
+    startRecord: (recordOptions: RecordOptions) => Promise<any>
     stop: () => Promise<any>
     hide: () => Promise<any>
     message: ({ type: string, msg: any }) => Promise<void>

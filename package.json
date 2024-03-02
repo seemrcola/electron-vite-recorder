@@ -44,6 +44,7 @@
   "dependencies": {
     "@iconify/json": "^2.2.180",
     "ffmpeg-static": "^5.2.0",
+    "pinia": "^2.1.7",
     "unocss": "^0.58.4"
   }
 }

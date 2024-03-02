@@ -130,7 +130,7 @@ export function useSvgRegion() {
       movex = Math.min(movex, SCREEN_WIDTH - Number(drag.getAttribute('width')))
       // 如果达到下边界
       // fixme mac无法真正全屏
-      const shim = window.navigator.platform.includes('Mac') ? 50 : 0
+      const shim = window.navigator.platform.includes('Mac') ? 37 : 0
       movey = Math.min(movey, SCREEN_HEIGHT - Number(drag.getAttribute('height')) - shim)
 
       drag.setAttribute('x', `${movex}`)
@@ -259,7 +259,17 @@ export function useSvgRegion() {
     recordBox = createApp(useRecordTipTemp, {
       currentRecorderType,
       startRecord: () => {
-        window.useRecord.startRecord()
+        // 由于物理像素和设备逻辑之间有区别 需要转为物理像素 同时⚠️由于有一个宽度为1的边框 需要处理掉这个边框
+        // fixme 同时 由于 mac无法真正全屏 离真正的顶部有距离
+        const shim = window.navigator.platform.includes('Mac') ? 37 : 0
+        const recordOptions = {
+          fullScreen: currentRecorderType.value === 'window',
+          x: Number(hole.getAttribute('x')) * scale,
+          y: Number(hole.getAttribute('y')) * scale,
+          width: Number(hole.getAttribute('width')) * scale + 2 * scale,
+          height: Number(hole.getAttribute('height')) * scale + 2 * scale + shim * scale,
+        }
+        window.useRecord.startRecord(recordOptions)
           .then(() => {
             // 首先根据全屏录制还是区域录制来判断是否需要隐藏窗口
             if (currentRecorderType.value === 'window') {

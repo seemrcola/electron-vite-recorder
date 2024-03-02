@@ -2,7 +2,7 @@
  * @param cb 回调函数
  * @param queue 回调函数队列
  * @description
- * 优化性能，防止频繁触发 fixme 有待验证 目前看起来有残影
+ * 优化性能，防止频繁触发
  */
 function rafDebounce(cb: () => void, queue: any[]) {
   queue.push(cb)
