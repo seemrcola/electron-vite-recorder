@@ -16,7 +16,3 @@ import { NLayout, NLayoutContent, NLayoutFooter, NLayoutHeader, NLayoutSider } f
     </NLayout>
   </NLayout>
 </template>
-
-<style scoped>
-
-</style>
