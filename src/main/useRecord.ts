@@ -4,15 +4,7 @@ import type { BrowserWindow } from 'electron'
 import { ipcMain } from 'electron'
 import kill from 'tree-kill'
 
-// ffmpeg
-import ffmpegPath from '@ffmpeg-installer/ffmpeg'
-import ffprobePath from '@ffprobe-installer/ffprobe'
-import ffmpeg from 'fluent-ffmpeg'
-
 import { getPlatform } from './utils'
-
-ffmpeg.setFfmpegPath(ffmpegPath.path)
-ffmpeg.setFfprobePath(ffprobePath.path)
 
 let recorderProcess: ChildProcessWithoutNullStreams
 
