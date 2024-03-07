@@ -1,7 +1,10 @@
 // ffmpeg
+import os from 'node:os'
 import ffmpegPath from '@ffmpeg-installer/ffmpeg'
 import ffprobePath from '@ffprobe-installer/ffprobe'
 import ffmpeg from 'fluent-ffmpeg'
+
+const dir = `${os.homedir()}/Desktop`
 
 ffmpeg.setFfmpegPath(ffmpegPath.path)
 ffmpeg.setFfprobePath(ffprobePath.path)
@@ -12,6 +15,7 @@ export function useFFMPEG() {
   function startRecord(recordOptions: RecordOptions) {
     // 新开一个ffmpeg进程
     const type = recordOptions.fullScreen ? 'window' : 'area'
+    const filename = `${dir}/record-output-${Date.now()}.mp4`
 
     //   ffmpeg -f avfoundation \                    // 采集桌面
     //   -capture_cursor 1 \                         // 捕获鼠标
@@ -29,7 +33,7 @@ export function useFFMPEG() {
         .fps(30)
         .videoCodec('libx264')
         .videoBitrate('2000k')
-        .output('output.mp4')
+        .output(`${filename}`)
         .run()
     }
     else {
@@ -39,8 +43,8 @@ export function useFFMPEG() {
         .fps(30)
         .videoCodec('libx264')
         .videoBitrate('2000k')
-        .output('output.mp4')
         .videoFilter(`crop=${width}:${height}:${x}:${y}`)
+        .output(`${filename}`)
         .run()
     }
   }
