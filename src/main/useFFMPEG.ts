@@ -7,26 +7,63 @@ ffmpeg.setFfmpegPath(ffmpegPath.path)
 ffmpeg.setFfprobePath(ffprobePath.path)
 
 export function useFFMPEG() {
-  const recorder = ffmpeg()
+  let ffcommand: ffmpeg.FfmpegCommand
 
-  function startRecord(type: 'window' | 'clip') {
-    // todo
+  function startRecord(recordOptions: RecordOptions) {
+    // 新开一个ffmpeg进程
+    const type = recordOptions.fullScreen ? 'window' : 'area'
+
+    //   ffmpeg -f avfoundation \                    // 采集桌面
+    //   -capture_cursor 1 \                         // 捕获鼠标
+    //   -i "1" \                                    // 采集设备 1的意思是采集屏幕
+    //   -video_size ${width}x${height} \            // 视频尺寸
+    //   -vf "crop=${width}:${height}:${x}:${y}" \   // 从屏幕的x,y坐标开始裁剪
+    //   -c:v libx264 \                              // 编码格式
+    //   -r 30 \                                     // 帧率
+    //   -preset ultrafast ~/desktop/${filename}     // 输出文件
+
+    ffcommand = ffmpeg({ source: '1:0' })
+    if (type === 'window') {
+      ffcommand
+        .inputFormat('avfoundation')
+        .fps(30)
+        .videoCodec('libx264')
+        .videoBitrate('2000k')
+        .output('output.mp4')
+        .run()
+    }
+    else {
+      const { width, height, x, y } = recordOptions
+      ffcommand
+        .inputFormat('avfoundation')
+        .fps(30)
+        .videoCodec('libx264')
+        .videoBitrate('2000k')
+        .output('output.mp4')
+        .videoFilter(`crop=${width}:${height}:${x}:${y}`)
+        .run()
+    }
   }
 
   function stopRecord() {
-    // todo
+    // 停止录制
+    ffcommand
+      .on('end', () => { console.log('Finished recording') })
+      .on('error', (err) => { console.log('Error:', err) })
+      .kill('SIGINT')
   }
 
   function pauseRecord() {
-    // todo
+    // 暂停录制
+    ffcommand.kill('SIGSTOP')
   }
 
   function resumeRecord() {
-    // todo
+    // 继续录制
+    ffcommand.kill('SIGCONT')
   }
 
   return {
-    recorder,
     startRecord,
     stopRecord,
     pauseRecord,
