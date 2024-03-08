@@ -3,7 +3,9 @@ import Layout from './layouts/index.vue'
 </script>
 
 <template>
-  <Layout h-full w-full />
+  <Suspense>
+    <Layout h-full w-full />
+  </Suspense>
 </template>
 
 <style scoped>

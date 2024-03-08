@@ -48,6 +48,7 @@
     "@iconify/json": "^2.2.180",
     "fluent-ffmpeg": "^2.1.2",
     "pinia": "^2.1.7",
-    "unocss": "^0.58.4"
+    "unocss": "^0.58.4",
+    "vue-router": "^4.3.0"
   }
 }

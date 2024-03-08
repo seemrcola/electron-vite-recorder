@@ -4,8 +4,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { BrowserWindow, app, ipcMain, screen, shell } from 'electron'
 import { useClipWindow } from './useClipWindow'
-
-// import { useInterfaceWindow } from './useInterfaceWindow'
+import { useInterfaceWindow } from './useInterfaceWindow'
 
 import { shim } from './utils'
 import { useDrag } from './useDrag'
@@ -79,7 +78,7 @@ async function createWindow() {
   // clipWindow
   const clipWindow = await useClipWindow()
   // interfaceWindow
-  // useInterfaceWindow()
+  useInterfaceWindow()
 
   // keep ratio
   win.setAspectRatio(1)

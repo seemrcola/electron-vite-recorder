@@ -4,10 +4,10 @@ import ffmpegPath from '@ffmpeg-installer/ffmpeg'
 import ffprobePath from '@ffprobe-installer/ffprobe'
 import ffmpeg from 'fluent-ffmpeg'
 
-const dir = `${os.homedir()}/Desktop`
-
 ffmpeg.setFfmpegPath(ffmpegPath.path)
 ffmpeg.setFfprobePath(ffprobePath.path)
+
+const dir = `${os.homedir()}/Desktop`
 
 export function useFFMPEG() {
   let ffcommand: ffmpeg.FfmpegCommand
@@ -27,6 +27,7 @@ export function useFFMPEG() {
     //   -preset ultrafast ~/desktop/${filename}     // 输出文件
 
     ffcommand = ffmpeg({ source: '1:0' })
+
     if (type === 'window') {
       ffcommand
         .inputFormat('avfoundation')
