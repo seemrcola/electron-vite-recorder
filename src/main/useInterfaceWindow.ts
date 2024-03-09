@@ -38,6 +38,7 @@ export async function useInterfaceWindow() {
     width: width * 0.8,
     height: height * 0.7,
     alwaysOnTop: true,
+    resizable: false,
     title: 'Recorder Interface',
     webPreferences: {
       preload,
