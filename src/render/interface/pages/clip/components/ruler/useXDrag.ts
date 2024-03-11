@@ -21,6 +21,8 @@ export function useXDrag(dom: HTMLElement, options: Options) {
   }
 
   function onmousemove(e: MouseEvent) {
+    // 阻止默认事件 比如选中文字之类的
+    e.preventDefault()
     if (lock.value) {
       // 计算移动的距离
       const distance = e.clientX - startX.value
