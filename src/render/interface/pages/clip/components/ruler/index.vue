@@ -2,7 +2,13 @@
 import { onMounted, ref, watch } from 'vue'
 import { useXDrag } from './useXDrag'
 
+const props = defineProps<{
+  src: string
+}>()
+
 /* 尺子功能 */
+const videoRef = ref<HTMLVideoElement | null>(null)
+
 const rulerRef = ref<HTMLDivElement | null>(null)
 const leftRef = ref<HTMLDivElement | null>(null)
 const rightRef = ref<HTMLDivElement | null>(null)
@@ -35,7 +41,7 @@ watch(
       // l在移动
       popupX.value = leftClientX - rulerClientX
     }
-    else if (r !== or) {
+    if (r !== or) {
       // r在移动
       popupX.value = rightClientX - rulerClientX
     }
@@ -57,24 +63,50 @@ function initRuler() {
   rightHookResult.value = useXDrag(right, { border: rulerWidth.value - 4 })
 }
 
+const frames = ref<string[]>([])
+watch(
+  () => props.src,
+  () => getFrames(),
+  { immediate: true },
+)
+function getFrames() {
+  if (!videoRef.value)
+    return frames.value = []
+  if (!props.src)
+    return frames.value = []
+
+  // todo 获取视频帧
+}
+
 onMounted(() => {
   initRuler()
 })
 </script>
 
 <template>
-  <div ref="rulerRef" w="90%" b="0.25rem solid dark" m-auto h-50px my-4 relative>
+  <div
+    ref="rulerRef"
+    w="90%" b="0.25rem solid dark" m-auto h-50px my-4
+    flex relative
+  >
+    <img
+      v-for="(item, index) of frames" :key="index"
+      :src="item" alt="video"
+      flex-1
+    >
     <div
-      ref="leftRef" h-full w="4px" bg-blue
+      ref="leftRef"
+      h-full w="4px" bg-blue
       absolute z-9 cursor-pointer
     />
     <div
-      ref="rightRef" h-full w="4px" bg-red
+      ref="rightRef"
+      h-full w="4px" bg-red
       absolute z-9 cursor-pointer
     />
     <!--    红蓝边界中间的部分 -->
     <div
-      absolute z-1 bg-red-1 h-full
+      absolute z-5 bg="#ff440022" h-full
       :style="{ left: `${coverLeft}px`, width: `${coverWidth}px` }"
     />
     <!--    图像弹出层 -->

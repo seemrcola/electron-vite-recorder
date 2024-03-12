@@ -23,6 +23,6 @@ function toggleVideo() {
       w-full h-full rounded-1
       @dblclick="toggleVideo"
     />
-    <Ruler />
+    <Ruler :src="props.src" />
   </div>
 </template>
