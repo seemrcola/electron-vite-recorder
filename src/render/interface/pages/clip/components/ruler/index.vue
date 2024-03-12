@@ -14,9 +14,11 @@ const rightHookResult = ref<any>({})
 const coverWidth = ref(0)
 const coverLeft = ref(0)
 
+const popupX = ref(0)
+
 watch(
   () => [leftHookResult.value.x, rightHookResult.value.x], // 只要x变了代表在移动
-  () => {
+  ([l, r], [ol, or]) => {
     // 先获取尺子到的clientX
     const rulerClientX = rulerRef.value!.getBoundingClientRect().left
     // 获取leftRef的clientX
@@ -27,6 +29,16 @@ watch(
     // 计算cover的宽度和left
     coverWidth.value = Math.abs(rightClientX - leftClientX)
     coverLeft.value = Math.min(leftClientX, rightClientX) - rulerClientX
+
+    // 判断是l在移动还是r在移动
+    if (l !== ol) {
+      // l在移动
+      popupX.value = leftClientX - rulerClientX
+    }
+    else if (r !== or) {
+      // r在移动
+      popupX.value = rightClientX - rulerClientX
+    }
   },
 )
 
@@ -66,8 +78,13 @@ onMounted(() => {
       :style="{ left: `${coverLeft}px`, width: `${coverWidth}px` }"
     />
     <!--    图像弹出层 -->
-    <div>
-      我是弹出层
+    <div
+      w-120px h-80px flex-center
+      absolute z-1000 bottom-60px bg-gray-2
+      :style="{ left: `${popupX}px` }" translate-x="-50%"
+    >
+      <img v-if="0" src="" alt="">
+      <div h-10 w-10 class="i-tabler:error-404" />
     </div>
   </div>
 </template>
