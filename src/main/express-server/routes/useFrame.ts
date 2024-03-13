@@ -47,7 +47,7 @@ function getDuration(filePath: string) {
     // 每间隔一个interval读取一帧
     const frames = []
     for (let i = 0; i < FRAME_COUNT; i++) {
-      const p = getFrame(filePath, i, i * interval, width, height)
+      const p = getFrame(filePath, i, i * interval, width!, height!)
       frames.push(p)
     }
     Promise.all(frames).then((res) => {
