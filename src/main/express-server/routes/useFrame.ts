@@ -1,5 +1,6 @@
 import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import fs from 'node:fs'
 import ffmpegPath from '@ffmpeg-installer/ffmpeg'
 import ffprobePath from '@ffprobe-installer/ffprobe'
 import ffmpeg from 'fluent-ffmpeg'
@@ -28,31 +29,44 @@ function useFrame(app: Express) {
      * 处理成base64字符串返回给前端
      */
     getDuration(filePath)
+      .then((data) => {
+        res.send({
+          code: 200,
+          data,
+        })
+      })
+      .catch((err) => {
+        res.send({
+          code: 500,
+          data: err,
+        })
+      })
   })
 }
 
 // 获取视频时长
 function getDuration(filePath: string) {
-  // 使用ffprobe获取视频时长
-  ffmpeg.ffprobe(filePath, (err, metadata) => {
-    if (err)
-      return console.log(err)
+  return new Promise((resolve, reject) => {
+    // 使用ffprobe获取视频时长
+    ffmpeg.ffprobe(filePath, (err, metadata) => {
+      if (err)
+        return reject(err)
 
-    // 获取视频宽高
-    const { width, height } = metadata.streams[0]
-    // 获取时长
-    const duration = metadata.format.duration!
-    // 根据时长计算出30帧的间隔
-    const interval = duration / FRAME_COUNT
-    // 每间隔一个interval读取一帧
-    const frames = []
-    for (let i = 0; i < FRAME_COUNT; i++) {
-      const p = getFrame(filePath, i, i * interval, width!, height!)
-      frames.push(p)
-    }
-    Promise.all(frames).then((res) => {
-      // todo
-      console.log(res)
+      // 获取视频宽高
+      const { width, height } = metadata.streams[0]
+      // 获取时长
+      const duration = metadata.format.duration!
+      // 根据时长计算出30帧的间隔
+      const interval = duration / FRAME_COUNT
+      // 每间隔一个interval读取一帧
+      const frames = []
+      for (let i = 0; i < FRAME_COUNT; i++) {
+        const p = getFrame(filePath, i, i * interval, width!, height!)
+        frames.push(p)
+      }
+      Promise.all(frames).then((res) => {
+        resolve(res)
+      })
     })
   })
 }
@@ -70,7 +84,13 @@ function getFrame(filePath: string, i: number, time: number, width: number, heig
       })
       .on('end', () => {
         console.log(`Image ${i} generated successfully.`)
-        resolve(true)
+        // 处理成base64字符串返回给前端
+        const data = fs.readFileSync(path.join(DIR, `image_${i}.png`))
+        // 以base64格式读取
+        const base64 = data.toString('base64')
+        // 删除图片
+        fs.unlinkSync(path.join(DIR, `image_${i}.png`))
+        resolve(base64)
       })
       .on('error', (err) => {
         console.error(`Error generating image ${i}:`, err)
