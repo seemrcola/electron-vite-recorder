@@ -86,8 +86,8 @@ function getFrame(filePath: string, i: number, time: number, width: number, heig
         console.log(`Image ${i} generated successfully.`)
         // 处理成base64字符串返回给前端
         const data = fs.readFileSync(path.join(DIR, `image_${i}.png`))
-        // 以base64格式读取
-        const base64 = data.toString('base64')
+        // 拼接前缀
+        const base64 = `data:image/png;base64,${data.toString('base64')}`
         // 删除图片
         fs.unlinkSync(path.join(DIR, `image_${i}.png`))
         resolve(base64)

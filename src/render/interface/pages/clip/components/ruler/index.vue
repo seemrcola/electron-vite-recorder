@@ -88,7 +88,8 @@ function getFrames() {
   })
     .then(res => res.json())
     .then((data) => {
-      frames.value = data
+      console.log(data)
+      frames.value = data.data
     })
   // todo -----------------------------------------------------------
 }
@@ -105,8 +106,8 @@ onMounted(() => {
     flex relative
   >
     <img
-      v-for="(item, index) of frames" :key="index"
-      :src="item" alt="video"
+      v-for="(base64, index) of frames" :key="index"
+      :src="base64" alt="base64"
       flex-1
     >
     <div
