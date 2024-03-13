@@ -13,7 +13,7 @@ export function useFFMPEG() {
   let ffcommand: ffmpeg.FfmpegCommand
 
   function startRecord(recordOptions: RecordOptions) {
-    // 新开一个ffmpeg进程
+    // 1. 采集桌面/桌面区域
     const type = recordOptions.fullScreen ? 'window' : 'area'
     const filename = `${dir}/record-output-${Date.now()}.mp4`
 

@@ -2,13 +2,16 @@
 import { ref } from 'vue'
 import Player from './components/player.vue'
 
+const filePath = ref<string>('')
 const fileName = ref<string>('')
 const objectURL = ref<string>('')
 const fileSelector = ref<HTMLInputElement | null>(null)
+
 function handleFileChange() {
   if (fileSelector.value?.files) {
     const file = fileSelector.value.files[0]
     fileName.value = file.name
+    filePath.value = file.path
     objectURL.value = URL.createObjectURL(file)
   }
 }
@@ -39,6 +42,8 @@ function handleFileChange() {
     <Player
       w-full m-auto aspect-ratio="16/9"
       :src="objectURL"
+      :path="filePath"
+      :name="fileName"
     />
   </main>
 </template>

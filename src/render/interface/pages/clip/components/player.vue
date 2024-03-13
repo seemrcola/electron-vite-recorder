@@ -4,6 +4,8 @@ import Ruler from './ruler/index.vue'
 
 const props = defineProps<{
   src: string
+  path: string
+  name: string
 }>()
 
 const videoRef = ref<HTMLVideoElement | null>(null)
@@ -23,6 +25,6 @@ function toggleVideo() {
       w-full h-full rounded-1
       @dblclick="toggleVideo"
     />
-    <Ruler :src="props.src" />
+    <Ruler :src="props.src" :name="props.name" :path="props.path" />
   </div>
 </template>

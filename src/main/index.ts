@@ -10,6 +10,8 @@ import { shim } from './utils'
 import { useDrag } from './useDrag'
 import { useRecord } from './useRecord'
 
+import { setupApp } from './express-server'
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
@@ -124,4 +126,9 @@ ipcMain.handle('open-win', async (_, arg) => {
     await childWindow.loadURL(`${url}#${arg}`)
   else
     await childWindow.loadFile(indexHtml, { hash: arg })
+})
+
+// 启动服务
+setupApp().then((port) => {
+  console.log('Server started at port:', port)
 })

@@ -4,6 +4,8 @@ import { useXDrag } from './useXDrag'
 
 const props = defineProps<{
   src: string
+  path: string
+  name: string
 }>()
 
 /* 尺子功能 */
@@ -70,12 +72,25 @@ watch(
   { immediate: true },
 )
 function getFrames() {
-  if (!videoRef.value)
-    return frames.value = []
   if (!props.src)
     return frames.value = []
 
-  // todo 获取视频帧
+  // todo 获取视频帧 ---------------------------------------------
+  fetch('http://localhost:3000/frame', {
+    method: 'POST',
+    body: JSON.stringify({
+      filePath: props.path,
+      fileName: props.name,
+    }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then(res => res.json())
+    .then((data) => {
+      frames.value = data
+    })
+  // todo -----------------------------------------------------------
 }
 
 onMounted(() => {
