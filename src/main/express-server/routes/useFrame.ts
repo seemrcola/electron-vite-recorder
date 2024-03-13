@@ -12,8 +12,6 @@ ffmpeg.setFfprobePath(ffprobePath.path)
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-console.log(__dirname)
-
 // 拿到静态资源目录
 const DIR = path.join(__dirname, 'temp')
 const FRAME_COUNT = 30
