@@ -11,10 +11,11 @@ ffmpeg.setFfprobePath(ffprobePath.path)
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-const DIR = path.resolve(__dirname, '../../temp')
+console.log(__dirname)
+
+// 拿到静态资源目录
+const DIR = path.join(__dirname, 'temp')
 const FRAME_COUNT = 30
-const WIDTH = 120
-const HEIGHT = 80
 
 function useFrame(app: Express) {
   app.post('/frame', (req: Request, res: Response) => {
@@ -37,6 +38,8 @@ function getDuration(filePath: string) {
     if (err)
       return console.log(err)
 
+    // 获取视频宽高
+    const { width, height } = metadata.streams[0]
     // 获取时长
     const duration = metadata.format.duration!
     // 根据时长计算出30帧的间隔
@@ -44,7 +47,7 @@ function getDuration(filePath: string) {
     // 每间隔一个interval读取一帧
     const frames = []
     for (let i = 0; i < FRAME_COUNT; i++) {
-      const p = getFrame(filePath, i, i * interval)
+      const p = getFrame(filePath, i, i * interval, width, height)
       frames.push(p)
     }
     Promise.all(frames).then((res) => {
@@ -54,7 +57,7 @@ function getDuration(filePath: string) {
   })
 }
 
-function getFrame(filePath: string, i: number, time: number) {
+function getFrame(filePath: string, i: number, time: number, width: number, height: number) {
   return new Promise((resolve, reject) => {
     // 使用 ffmpeg 截取图片
     ffmpeg(filePath)
@@ -63,7 +66,7 @@ function getFrame(filePath: string, i: number, time: number) {
         folder: DIR,
         filename: `image_${i}.png`,
         timestamps: [time],
-        size: `${WIDTH}x${HEIGHT}`, // 可以根据需要指定图片尺寸
+        size: `${width}x${height}`, // 可以根据需要指定图片尺寸
       })
       .on('end', () => {
         console.log(`Image ${i} generated successfully.`)
