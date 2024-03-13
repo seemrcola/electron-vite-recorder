@@ -9,8 +9,6 @@ const props = defineProps<{
 }>()
 
 /* 尺子功能 */
-const videoRef = ref<HTMLVideoElement | null>(null)
-
 const rulerRef = ref<HTMLDivElement | null>(null)
 const leftRef = ref<HTMLDivElement | null>(null)
 const rightRef = ref<HTMLDivElement | null>(null)
@@ -66,6 +64,7 @@ function initRuler() {
 }
 
 const frames = ref<string[]>([])
+const showFrames = ref<string[]>([])
 watch(
   () => props.src,
   () => getFrames(),
@@ -75,7 +74,6 @@ function getFrames() {
   if (!props.src)
     return frames.value = []
 
-  // todo 获取视频帧 ---------------------------------------------
   fetch('http://localhost:3000/frame', {
     method: 'POST',
     body: JSON.stringify({
@@ -88,10 +86,10 @@ function getFrames() {
   })
     .then(res => res.json())
     .then((data) => {
-      console.log(data)
-      frames.value = data.data
+      const base64s = data.data
+      frames.value = base64s
+      showFrames.value = base64s.filter((_: string, index: number) => index % 3 === 0)
     })
-  // todo -----------------------------------------------------------
 }
 
 onMounted(() => {
@@ -103,26 +101,25 @@ onMounted(() => {
   <div
     ref="rulerRef"
     w="90%" b="0.25rem solid dark" m-auto h-50px my-4
-    flex relative
+    flex relative overflow-hidden
   >
     <img
-      v-for="(base64, index) of frames" :key="index"
+      v-for="(base64, index) of showFrames" :key="index"
       :src="base64" alt="base64"
-      flex-1
     >
     <div
       ref="leftRef"
       h-full w="4px" bg-blue
-      absolute z-9 cursor-pointer
+      absolute z-max cursor-pointer
     />
     <div
       ref="rightRef"
       h-full w="4px" bg-red
-      absolute z-9 cursor-pointer
+      absolute z-max cursor-pointer
     />
     <!--    红蓝边界中间的部分 -->
     <div
-      absolute z-5 bg="#ff440022" h-full
+      absolute z-5 bg="#00000011" h-full
       :style="{ left: `${coverLeft}px`, width: `${coverWidth}px` }"
     />
     <!--    图像弹出层 -->
