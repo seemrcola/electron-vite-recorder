@@ -19,27 +19,24 @@ function handleFileChange() {
 
 <template>
   <main>
-    <header
-      h-32px flex-center bg="gray-2" color-blue-5 font-bold rounded-1
-      class="text-white-shadow"
+    <label
+      v-if="!objectURL"
+      for="select-file"
+      w-full h-200px flex-center bg-gray-1
+      b="1px dashed gray-3" rounded-1
     >
-      视频裁剪
-    </header>
-    <div w-full h-60px my-4 flex-center b="1px dashed gray-2">
-      <label for="select-file" w-full h-full flex-center>
-        <span class="text-black-shadow" text-light text-xs px-4 cursor-pointer>
-          {{ fileName || '选择文件' }}
-        </span>
-        <input
-          id="select-file"
-          ref="fileSelector"
-          type="file"
-          fixed z--1 top--100 left--100 rounded-1
-          @change="handleFileChange"
-        >
-      </label>
-    </div>
+      选择文件上传
+      <input
+
+        id="select-file"
+        ref="fileSelector"
+        type="file"
+        fixed z--1 top--100 left--100 rounded-1
+        @change="handleFileChange"
+      >
+    </label>
     <Player
+      v-else
       w-full m-auto aspect-ratio="16/9"
       :src="objectURL"
       :path="filePath"
@@ -47,20 +44,3 @@ function handleFileChange() {
     />
   </main>
 </template>
-
-<style scoped>
-.text-white-shadow {
-  text-shadow:
-      -1px -1px 0 #fff,
-      1px -1px 0 #fff,
-      -1px  1px 0 #fff,
-      1px  1px 0 #fff; /* 创建白色边缘 */
-}
-.text-black-shadow {
-  text-shadow:
-      -1px -1px 0 #000,
-      1px -1px 0 #000,
-      -1px  1px 0 #000,
-      1px  1px 0 #000; /* 创建黑色边缘 */
-}
-</style>

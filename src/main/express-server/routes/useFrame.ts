@@ -14,6 +14,10 @@ const __dirname = dirname(__filename)
 
 // 拿到静态资源目录
 const DIR = path.join(__dirname, 'temp')
+// 如果没有这个目录就创建一个
+if (!fs.existsSync(DIR))
+  fs.mkdirSync(DIR)
+
 const FRAME_COUNT = 30
 
 function useFrame(app: Express) {
@@ -82,13 +86,20 @@ function getFrame(filePath: string, i: number, time: number, width: number, heig
       })
       .on('end', () => {
         console.log(`Image ${i} generated successfully.`)
-        // 处理成base64字符串返回给前端
-        const data = fs.readFileSync(path.join(DIR, `image_${i}.png`))
-        // 拼接前缀
-        const base64 = `data:image/png;base64,${data.toString('base64')}`
+
         // 删除图片
-        fs.unlinkSync(path.join(DIR, `image_${i}.png`))
-        resolve(base64)
+        try {
+          // 处理成base64字符串返回给前端
+          const data = fs.readFileSync(path.join(DIR, `image_${i}.png`))
+          // 拼接前缀
+          const base64 = `data:image/png;base64,${data.toString('base64')}`
+          // 删除图片
+          fs.unlinkSync(path.join(DIR, `image_${i}.png`))
+          resolve(base64)
+        }
+        catch (err) {
+          reject(err)
+        }
       })
       .on('error', (err) => {
         console.error(`Error generating image ${i}:`, err)

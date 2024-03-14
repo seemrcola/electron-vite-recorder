@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useXDrag } from './useXDrag'
 
 const props = defineProps<{
@@ -53,8 +53,8 @@ function initRuler() {
   rulerWidth.value = ruler.clientWidth
 
   // 左侧右侧的先定位
-  leftRef.value!.style.left = '-4px'
-  rightRef.value!.style.left = `${rulerWidth.value}px`
+  leftRef.value!.style.left = '0'
+  rightRef.value!.style.left = `${rulerWidth.value - 4}px`
 
   // 左侧右侧的拖动
   const left = leftRef.value!
@@ -88,9 +88,26 @@ function getFrames() {
     .then((data) => {
       const base64s = data.data
       frames.value = base64s
-      showFrames.value = base64s.filter((_: string, index: number) => index % 3 === 0)
+      showFrames.value = base64s.filter(
+        (_: string, index: number) => index % 3 === 0 || index === base64s.length - 1,
+      )
     })
 }
+
+const showPopup = computed(() => {
+  // 当距离左右边界距离大于4px的时候 返回true
+  return (popupX.value > 4) && (rulerWidth.value - popupX.value > 4)
+})
+
+const currentFrame = computed(() => {
+  // 根据坐标算出对应的url
+  const len = frames.value.length
+  if (len === 0)
+    return
+
+  const index = Math.floor((popupX.value / rulerWidth.value) * len)
+  return frames.value[index]
+})
 
 onMounted(() => {
   initRuler()
@@ -100,35 +117,41 @@ onMounted(() => {
 <template>
   <div
     ref="rulerRef"
-    w="90%" b="0.25rem solid dark" m-auto h-50px my-4
-    flex relative overflow-hidden
+    relative
+    w="90%" b="2px solid dark"
+    rounded-1 m-auto h-50px my-2
+    flex box-border
   >
-    <img
-      v-for="(base64, index) of showFrames" :key="index"
-      :src="base64" alt="base64"
-    >
+    <div w-full overflow-hidden>
+      <img
+        v-for="(base64, index) of showFrames" :key="index"
+        :src="base64" alt="base64"
+        h-full
+      >
+    </div>
     <div
       ref="leftRef"
       h-full w="4px" bg-blue
-      absolute z-max cursor-pointer
+      absolute z-999 cursor-pointer
     />
     <div
       ref="rightRef"
       h-full w="4px" bg-red
-      absolute z-max cursor-pointer
+      absolute z-999 cursor-pointer
     />
     <!--    红蓝边界中间的部分 -->
     <div
-      absolute z-5 bg="#00000011" h-full
+      absolute z-5 bg="#ff666620" h-full
       :style="{ left: `${coverLeft}px`, width: `${coverWidth}px` }"
     />
     <!--    图像弹出层 -->
     <div
+      v-show="showPopup"
       w-120px h-80px flex-center
-      absolute z-1000 bottom-60px bg-gray-2
-      :style="{ left: `${popupX}px` }" translate-x="-50%"
+      absolute z-max top--90px translate-x="-50%"
+      bg-gray-1 :style="{ left: `${popupX}px` }"
     >
-      <img v-if="0" src="" alt="">
+      <img v-if="currentFrame" w-full h-full :src="currentFrame" alt="">
       <div h-10 w-10 class="i-tabler:error-404" />
     </div>
   </div>
