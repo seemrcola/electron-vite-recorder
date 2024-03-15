@@ -8,6 +8,10 @@ const props = defineProps<{
   name: string
 }>()
 
+const emits = defineEmits<{
+  (e: 'updateTime', time: number): void
+}>()
+
 /* 尺子功能 */
 const rulerRef = ref<HTMLDivElement | null>(null)
 const leftRef = ref<HTMLDivElement | null>(null)
@@ -22,31 +26,30 @@ const coverLeft = ref(0)
 
 const popupX = ref(0)
 
+const duration = ref(0)
+
 watch(
   () => [leftHookResult.value.x, rightHookResult.value.x], // 只要x变了代表在移动
-  ([l, r], [ol, or]) => {
-    // 先获取尺子到的clientX
-    const rulerClientX = rulerRef.value!.getBoundingClientRect().left
-    // 获取leftRef的clientX
-    const leftClientX = leftRef.value!.getBoundingClientRect().left
-    // 获取rightRef的clientX
-    const rightClientX = rightRef.value!.getBoundingClientRect().left
-
-    // 计算cover的宽度和left
-    coverWidth.value = Math.abs(rightClientX - leftClientX)
-    coverLeft.value = Math.min(leftClientX, rightClientX) - rulerClientX
-
-    // 判断是l在移动还是r在移动
-    if (l !== ol) {
-      // l在移动
-      popupX.value = leftClientX - rulerClientX
-    }
-    if (r !== or) {
-      // r在移动
-      popupX.value = rightClientX - rulerClientX
-    }
-  },
+  ([l, r], [ol, or]) => moveLine(l, r, ol, or),
 )
+
+function moveLine(l: number, r: number, ol: number, or: number) {
+  const rulerClientX = rulerRef.value!.getBoundingClientRect().left // 先获取尺子到的clientX
+  const leftClientX = leftRef.value!.getBoundingClientRect().left // 获取leftRef的clientX
+  const rightClientX = rightRef.value!.getBoundingClientRect().left // 获取rightRef的clientX
+
+  // 计算cover的宽度和left
+  coverWidth.value = Math.abs(rightClientX - leftClientX)
+  coverLeft.value = Math.min(leftClientX, rightClientX) - rulerClientX
+
+  // 判断是l在移动还是r在移动
+  if (l !== ol)
+    popupX.value = leftClientX - rulerClientX
+  if (r !== or)
+    popupX.value = rightClientX - rulerClientX
+
+  emits('updateTime', popupX.value / rulerWidth.value * duration.value)
+}
 
 function initRuler() {
   const ruler = rulerRef.value!
@@ -86,11 +89,13 @@ function getFrames() {
   })
     .then(res => res.json())
     .then((data) => {
-      const base64s = data.data
+      const base64s = data.data.frames
+      duration.value = data.data.duration
       frames.value = base64s
       showFrames.value = base64s.filter(
         (_: string, index: number) => index % 3 === 0 || index === base64s.length - 1,
       )
+      console.log(showFrames.value.length)
     })
 }
 
@@ -119,14 +124,21 @@ onMounted(() => {
     ref="rulerRef"
     relative
     w="90%" b="2px solid dark"
-    rounded-1 m-auto h-50px my-2
+    rounded-1 m-auto h-50px
     flex box-border
   >
-    <div w-full overflow-hidden>
+    <!--    loading -->
+    <div
+      v-if="duration === 0"
+      absolute w-full h-full left-0 top-0 text-blue
+      flex-center z-max
+    >
+      <div class="i-eos-icons:bubble-loading" w-6 h-6 />
+    </div>
+    <div w-full overflow-hidden flex>
       <img
         v-for="(base64, index) of showFrames" :key="index"
         :src="base64" alt="base64"
-        h-full
       >
     </div>
     <div

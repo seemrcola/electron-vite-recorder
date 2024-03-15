@@ -67,7 +67,7 @@ function getDuration(filePath: string) {
         frames.push(p)
       }
       Promise.all(frames).then((res) => {
-        resolve(res)
+        resolve({ frames: res, duration })
       })
     })
   })
