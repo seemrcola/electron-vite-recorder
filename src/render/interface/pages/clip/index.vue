@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import Player from './components/player.vue'
+import Player from './components/player/index.vue'
 
 const filePath = ref<string>('')
 const fileName = ref<string>('')
