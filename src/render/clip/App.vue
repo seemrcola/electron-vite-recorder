@@ -5,6 +5,8 @@ import { useSvgRegion } from './composables/useSvgRegion'
 onMounted(() => {
   const { start } = useSvgRegion()
   start()
+
+  console.dir(document.querySelector('body'))
 })
 </script>
 
