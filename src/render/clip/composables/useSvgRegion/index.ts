@@ -139,8 +139,7 @@ export function useSvgRegion() {
       movex = Math.min(movex, SCREEN_WIDTH - Number(drag.getAttribute('width')))
       // 如果达到下边界
       // fixme mac无法真正全屏
-      const shim = window.navigator.platform.includes('Mac') ? 37 : 0
-      movey = Math.min(movey, SCREEN_HEIGHT - Number(drag.getAttribute('height')) - shim)
+      movey = Math.min(movey, SCREEN_HEIGHT - Number(drag.getAttribute('height')))
 
       drag.setAttribute('x', `${movex}`)
       drag.setAttribute('y', `${movey}`)
