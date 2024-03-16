@@ -59,7 +59,7 @@ onMounted(() => {
         @dblclick="toggleVideo"
       >
         <div
-          w-10 h-10 text-light-3 cursor-pointer=""
+          w-10 h-10 text-light-3 cursor-pointer
           class="i-material-symbols:play-circle-outline"
           @click="() => videoRef?.play()"
         />
@@ -71,19 +71,14 @@ onMounted(() => {
         absolute w-full h-40px left-0 bottom-0
         bg="[rgba(0,0,0,0.7)]" text-light
         flex items-center
+        @click.stop
       >
         <div>
           <div
-            v-if="playStatus"
-            w-8 h-8 text-light-3 cursor-pointer=""
+            v-show="playStatus"
+            w-8 h-8 text-light-3 cursor-pointer transition-300 hover="scale-105 text-blue-3"
             class="i-material-symbols:pause-circle-outline"
             @click="() => videoRef?.pause()"
-          />
-          <div
-            v-else
-            w-8 h-8 text-light-3 cursor-pointer=""
-            class="i-material-symbols:play-circle-outline"
-            @click="() => videoRef?.play()"
           />
         </div>
       </div>
