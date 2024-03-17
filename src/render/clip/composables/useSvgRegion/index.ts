@@ -24,6 +24,8 @@ export function useSvgRegion() {
   let __drag_mode: 'move' | 'resize' = 'move'
   let startPoint = { x: 0, y: 0 }
   let startDragPoint = { x: 0, y: 0 }
+  // 用来记录相对于屏幕的坐标 窗口坐标和屏幕坐标有点区别
+  let screenPoint = { x: 0, y: 0 }
 
   window.useRecord.onCloseWin((msg) => {
     console.log(msg)
@@ -60,10 +62,18 @@ export function useSvgRegion() {
     if (document.querySelector('#mask-rect'))
       return
 
+    // 记录clientX
     const { clientX, clientY } = e
     startPoint = {
       x: clientX,
       y: clientY,
+    }
+
+    // 记录screenX
+    const { screenX, screenY } = e
+    screenPoint = {
+      x: screenX,
+      y: screenY,
     }
 
     document.addEventListener('mousemove', moveRegion)
@@ -138,13 +148,18 @@ export function useSvgRegion() {
       // 如果达到右边界
       movex = Math.min(movex, SCREEN_WIDTH - Number(drag.getAttribute('width')))
       // 如果达到下边界
-      // fixme mac无法真正全屏
       movey = Math.min(movey, SCREEN_HEIGHT - Number(drag.getAttribute('height')))
 
       drag.setAttribute('x', `${movex}`)
       drag.setAttribute('y', `${movey}`)
       hole.setAttribute('x', `${movex}`)
       hole.setAttribute('y', `${movey}`)
+
+      // 记录新的screen位置
+      screenPoint = {
+        x: screenPoint.x + dx,
+        y: screenPoint.y + dy,
+      }
     }
     if (__drag_mode === 'resize') {
       // 小于0的时候不变
@@ -268,14 +283,12 @@ export function useSvgRegion() {
       currentRecorderType,
       startRecord: () => {
         // 由于物理像素和设备逻辑之间有区别 需要转为物理像素 同时⚠️由于有一个宽度为1的边框 需要处理掉这个边框
-        // fixme 同时 由于 mac无法真正全屏 离真正的顶部有距离
-        const shim = window.navigator.platform.includes('Mac') ? 37 : 0
         const recordOptions = {
           fullScreen: currentRecorderType.value === 'window',
-          x: Number(hole.getAttribute('x')) * scale,
-          y: Number(hole.getAttribute('y')) * scale,
+          x: screenPoint.x * scale,
+          y: screenPoint.y * scale,
           width: Number(hole.getAttribute('width')) * scale + 2 * scale,
-          height: Number(hole.getAttribute('height')) * scale + 2 * scale + shim * scale,
+          height: Number(hole.getAttribute('height')) * scale + 2 * scale,
         }
         // 去掉hole的边框颜色
         hole.setAttribute('stroke', 'transparent')
