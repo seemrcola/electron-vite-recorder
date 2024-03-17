@@ -25,7 +25,7 @@ export function useSvgRegion() {
   let startPoint = { x: 0, y: 0 }
   let startDragPoint = { x: 0, y: 0 }
   // 用来记录相对于屏幕的坐标 窗口坐标和屏幕坐标有点区别
-  let screenPoint = { x: 0, y: 0 }
+  let deltaY = 0
 
   window.useRecord.onCloseWin((msg) => {
     console.log(msg)
@@ -70,11 +70,9 @@ export function useSvgRegion() {
     }
 
     // 记录screenX
-    const { screenX, screenY } = e
-    screenPoint = {
-      x: screenX,
-      y: screenY,
-    }
+    // 如果是第一次操作该窗口(即没有hole) 那么需要记录deltaY
+    if (!hole)
+      deltaY = e.screenY - clientY
 
     document.addEventListener('mousemove', moveRegion)
     document.addEventListener('mouseup', endRegion)
@@ -147,19 +145,13 @@ export function useSvgRegion() {
       movex = Math.max(0, movex)
       // 如果达到右边界
       movex = Math.min(movex, SCREEN_WIDTH - Number(drag.getAttribute('width')))
-      // 如果达到下边界
-      movey = Math.min(movey, SCREEN_HEIGHT - Number(drag.getAttribute('height')))
+      // 如果达到下边界 下边界需要减去deltaY
+      movey = Math.min(movey, SCREEN_HEIGHT - Number(drag.getAttribute('height')) - deltaY)
 
       drag.setAttribute('x', `${movex}`)
       drag.setAttribute('y', `${movey}`)
       hole.setAttribute('x', `${movex}`)
       hole.setAttribute('y', `${movey}`)
-
-      // 记录新的screen位置
-      screenPoint = {
-        x: screenPoint.x + dx,
-        y: screenPoint.y + dy,
-      }
     }
     if (__drag_mode === 'resize') {
       // 小于0的时候不变
@@ -283,10 +275,12 @@ export function useSvgRegion() {
       currentRecorderType,
       startRecord: () => {
         // 由于物理像素和设备逻辑之间有区别 需要转为物理像素 同时⚠️由于有一个宽度为1的边框 需要处理掉这个边框
+        const x = Number(hole.getAttribute('x'))
+        const y = Number(hole.getAttribute('y'))
         const recordOptions = {
           fullScreen: currentRecorderType.value === 'window',
-          x: screenPoint.x * scale,
-          y: screenPoint.y * scale,
+          x: x * scale,
+          y: (y + deltaY) * scale,
           width: Number(hole.getAttribute('width')) * scale + 2 * scale,
           height: Number(hole.getAttribute('height')) * scale + 2 * scale,
         }
