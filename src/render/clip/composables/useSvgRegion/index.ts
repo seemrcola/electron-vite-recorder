@@ -52,7 +52,6 @@ export function useSvgRegion() {
     createFullScreenSvg()
     svg = document.querySelector('#mask-svg') as SVGSVGElement // 这个名称是useSvgRegionTemp.vue中定义的 算是写死的
     document.addEventListener('mousedown', startRegion)
-
     document.addEventListener('keydown', escCallback)
   }
 
@@ -197,11 +196,31 @@ export function useSvgRegion() {
 
     // 获取mask
     const mask = svg.querySelector('#mask') as SVGMaskElement
-    // 清除掉mask的内容 重新绘制
-    if (mask.children.length > 1) {
-      for (let i = 1; i < mask.children.length; i++)
-        mask.removeChild(mask.children[i])
+    if (!svg.querySelector('#mask-rect')) {
+      const rect = createHole(left, top, width, height)
+      mask.appendChild(rect)
+      hole = rect // 保存hole
     }
+    else {
+      updateRect(hole, left, top, width, height)
+    }
+
+    // 由于这个rect是不能做任何交互的 所以为了交互我们要再加一个rect去做交互
+    // 清除掉drag-rect的内容 重新绘制
+    if (!svg.querySelector('#drag-rect')) {
+      const dragRect = createDragRect(left, top, width, height)
+      svg.appendChild(dragRect)
+      drag = dragRect // 保存drag
+    }
+    else {
+      updateRect(drag, left, top, width, height)
+    }
+
+    resizeTip()
+    recordTip()
+  }
+
+  function createHole(left: number, top: number, width: number, height: number) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     rect.id = 'mask-rect'
     rect.setAttribute('x', `${left}`)
@@ -209,13 +228,11 @@ export function useSvgRegion() {
     rect.setAttribute('width', `${width}`)
     rect.setAttribute('height', `${height}`)
     rect.setAttribute('fill', 'black')
-    mask.appendChild(rect)
-    hole = rect // 保存hole
 
-    // 由于这个rect是不能做任何交互的 所以为了交互我们要再加一个rect去做交互
-    // 清除掉drag-rect的内容 重新绘制
-    if (svg.querySelector('#drag-rect'))
-      svg.removeChild(svg.querySelector('#drag-rect')!)
+    return rect
+  }
+
+  function createDragRect(left: number, top: number, width: number, height: number) {
     const dragRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     dragRect.id = 'drag-rect'
     dragRect.setAttribute('x', `${left}`)
@@ -228,10 +245,14 @@ export function useSvgRegion() {
     dragRect.setAttribute('stroke-width', '1')
     dragRect.setAttribute('stroke-dasharray', '5 5')
 
-    svg.appendChild(dragRect)
+    return dragRect
+  }
 
-    resizeTip()
-    recordTip()
+  function updateRect(rect: SVGRectElement, left: number, top: number, width: number, height: number) {
+    rect.setAttribute('x', `${left}`)
+    rect.setAttribute('y', `${top}`)
+    rect.setAttribute('width', `${width}`)
+    rect.setAttribute('height', `${height}`)
   }
 
   // 在drag-rect的右下角加一个resize标识
