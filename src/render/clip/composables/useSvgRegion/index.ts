@@ -11,21 +11,17 @@ export function useSvgRegion() {
   let recordBox: App<Element> // 录制的提示盒子 即recordTipTemp.vue组件createApp的返回值
   let recordBoxDom: HTMLElement // 录制的提示盒子的dom
 
+  // ⚠️ 这里的宽高是屏幕的宽高 因为是全屏的 如果不是全屏 则需要除以缩放比例
   const WINDOW_WIDTH = window.innerWidth // 窗口宽度
   const WINDOW_HEIGHT = window.innerHeight // 窗口高度
   // 屏幕当前缩放比例
   const scale = window.devicePixelRatio
-  // 屏幕的实际宽高
-  const SCREEN_WIDTH = WINDOW_WIDTH / scale
-  const SCREEN_HEIGHT = WINDOW_HEIGHT / scale
 
   let __start = false
   let __start_drag = false
   let __drag_mode: 'move' | 'resize' = 'move'
   let startPoint = { x: 0, y: 0 }
   let startDragPoint = { x: 0, y: 0 }
-  // 用来记录相对于屏幕的坐标 窗口坐标和屏幕坐标有点区别
-  let deltaY = 0
 
   window.useRecord.onCloseWin((msg) => {
     console.log(msg)
@@ -67,11 +63,6 @@ export function useSvgRegion() {
       x: clientX,
       y: clientY,
     }
-
-    // 记录screenX
-    // 如果是第一次操作该窗口(即没有hole) 那么需要记录deltaY
-    if (!hole)
-      deltaY = e.screenY - clientY
 
     document.addEventListener('mousemove', moveRegion)
     document.addEventListener('mouseup', endRegion)
@@ -135,6 +126,8 @@ export function useSvgRegion() {
       // 如果达到边界了就不再移动
       const x = Number(drag.getAttribute('x'))
       const y = Number(drag.getAttribute('y'))
+      const rectWidth = Number(drag.getAttribute('width'))
+      const rectHeight = Number(drag.getAttribute('height'))
       let movex = x + dx
       let movey = y + dy
 
@@ -143,9 +136,9 @@ export function useSvgRegion() {
       // 如果达到左边界
       movex = Math.max(0, movex)
       // 如果达到右边界
-      movex = Math.min(movex, SCREEN_WIDTH - Number(drag.getAttribute('width')))
+      movex = Math.min(movex, WINDOW_WIDTH - rectWidth)
       // 如果达到下边界 下边界需要减去deltaY
-      movey = Math.min(movey, SCREEN_HEIGHT - Number(drag.getAttribute('height')) - deltaY)
+      movey = Math.min(movey, WINDOW_HEIGHT - rectHeight)
 
       drag.setAttribute('x', `${movex}`)
       drag.setAttribute('y', `${movey}`)
@@ -301,7 +294,7 @@ export function useSvgRegion() {
         const recordOptions = {
           fullScreen: currentRecorderType.value === 'window',
           x: x * scale,
-          y: (y + deltaY) * scale,
+          y: y * scale,
           width: Number(hole.getAttribute('width')) * scale + 2 * scale,
           height: Number(hole.getAttribute('height')) * scale + 2 * scale,
         }
