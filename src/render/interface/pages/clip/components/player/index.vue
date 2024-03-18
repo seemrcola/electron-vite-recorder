@@ -83,7 +83,12 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <Ruler v-if="0" :src="props.src" :name="props.name" :path="props.path" @update-time="updateTime" />
+    <Ruler
+      v-if="0"
+      mt-4
+      :src="props.src" :name="props.name" :path="props.path"
+      @update-time="updateTime"
+    />
   </div>
 </template>
 
