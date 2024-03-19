@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { NSlider } from 'naive-ui'
 import Ruler from '../ruler/index.vue'
 
 const props = defineProps<{
@@ -33,6 +34,10 @@ function addVideoListener(video: HTMLVideoElement) {
     playStatus.value = false
   }
 }
+
+// 处理拖动条
+const dragBarValue = ref(0)
+// todo: 如何处理拖动条和时间轴的同步
 
 onMounted(() => {
   addVideoListener(videoRef.value!)
@@ -73,13 +78,15 @@ onMounted(() => {
         flex items-center
         @click.stop
       >
-        <div>
+        <div flex-center>
           <div
             v-show="playStatus"
             w-8 h-8 text-light-3 cursor-pointer transition-300 hover="scale-105 text-blue-3"
             class="i-material-symbols:pause-circle-outline"
             @click="() => videoRef?.pause()"
           />
+          <div w-4 />
+          <NSlider v-model:value="dragBarValue" w-100 :step="1" :min="0" :max="videoRef?.duration" />
         </div>
       </div>
     </div>
