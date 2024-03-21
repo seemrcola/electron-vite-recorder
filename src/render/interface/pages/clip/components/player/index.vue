@@ -33,6 +33,11 @@ function addVideoListener(video: HTMLVideoElement) {
   video.onpause = () => {
     playStatus.value = false
   }
+  video.ontimeupdate = () => {
+    dragBarValue.value = video.currentTime
+    // 将这段动画做的丝滑一点
+    
+  }
 }
 
 // 处理拖动条
@@ -86,7 +91,7 @@ onMounted(() => {
             @click="() => videoRef?.pause()"
           />
           <div w-4 />
-          <NSlider v-model:value="dragBarValue" w-100 :step="1" :min="0" :max="videoRef?.duration" />
+          <NSlider v-model:value="dragBarValue" w-100 :step="0.01" :min="0" :max="videoRef?.duration" />
         </div>
       </div>
     </div>
