@@ -9,7 +9,6 @@ const props = defineProps<{
 }>()
 
 function changeRecorderType(type: string) {
-  // eslint-disable-next-line vue/no-mutating-props
   props.currentRecorderType.value = type
 }
 </script>

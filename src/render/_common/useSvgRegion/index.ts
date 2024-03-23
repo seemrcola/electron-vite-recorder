@@ -3,7 +3,28 @@ import { createApp, ref } from 'vue'
 import useRecordTipTemp from './useRecordTipTemp.vue'
 import useSvgRegionTemp from './useSvgRegionTemp.vue'
 
-export function useSvgRegion() {
+interface RecordOptions {
+  x: number
+  y: number
+  width: number
+  height: number
+  fullScreen: boolean
+}
+
+interface RegionLifeCycle {
+  // 窗口的显示与隐藏
+  winOnHide: () => void
+  winOnShow: () => void
+  // 开始录制 与 停止录制
+  onStrartRecord: (recordOptions: RecordOptions) => Promise<any>
+  onStopRecord: (callback: () => void) => void
+  // 当成功开始录制之后
+  onStartRecordSuccess: () => void
+  onStartClipRecordSuccess: () => void
+  onStartFullRecordSuccess: () => void
+}
+
+export function useSvgRegion(regionLifeCycle: RegionLifeCycle) {
   let svg: SVGSVGElement // svg 获取到这个名称是useSvgRegionTemp中的svg-mask
   let drag: SVGRectElement // drag-rect 用于拖拽
   let hole: SVGRectElement // svg mask 挖出来的洞
@@ -23,8 +44,8 @@ export function useSvgRegion() {
   let startPoint = { x: 0, y: 0 }
   let startDragPoint = { x: 0, y: 0 }
 
-  window.useRecord.onCloseWin((msg) => {
-    console.log(msg)
+  // 监听窗口的关闭 即监听录制结束
+  regionLifeCycle.onStopRecord(() => {
     // 还原颜色以便于下一次打开的时候颜色正常
     // 将svg的颜色还原
     hole.setAttribute('stroke', 'black')
@@ -40,7 +61,8 @@ export function useSvgRegion() {
   async function escCallback(e: KeyboardEvent) {
     if (e.key === 'Escape') {
       // 隐藏
-      await window.useRecord.hide()
+      // await window.useRecord.hide()
+      await regionLifeCycle.winOnHide()
     }
   }
 
@@ -304,11 +326,12 @@ export function useSvgRegion() {
         drag.setAttribute('stroke', 'transparent')
 
         // 开始录制
-        window.useRecord.startRecord(recordOptions)
+        regionLifeCycle.onStrartRecord(recordOptions)
           .then(() => {
             // 首先根据全屏录制还是区域录制来判断是否需要隐藏窗口
             if (currentRecorderType.value === 'window') {
-              window.useRecord.hide()
+              // window.useRecord.hide()
+              regionLifeCycle.onStartFullRecordSuccess()
             }
             else {
               // 需要删掉各种提示框
@@ -316,11 +339,13 @@ export function useSvgRegion() {
               recordBoxDom?.remove()
               // 去掉esc按钮的监听
               document.removeEventListener('keydown', escCallback)
-              // 告诉窗口让它变成可穿透窗口
-              window.useRecord.transparentClipWin()
+              // 一般情况下需要 告诉窗口让它变成可穿透窗口
+              // window.useRecord.transparentClipWin()
+              regionLifeCycle.onStartClipRecordSuccess()
             }
             // 其次需要通知index入口的页面来进行图标的改变
-            window.useRecord.message({ type: 'change-icon', msg: 'recording' })
+            // window.useRecord.message({ type: 'change-icon', msg: 'recording' })
+            regionLifeCycle.onStartRecordSuccess()
           })
           .catch(err => console.error(err))
       },
