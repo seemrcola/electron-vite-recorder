@@ -9,7 +9,7 @@ onMounted(() => {
     // 当窗口隐藏的时候 我们需要隐藏录屏窗口
     winOnHide: () => window.useRecord.hide(),
     // 当点击按钮录制的时候 调用 useRecord.startRecord 方法
-    onStrartRecord: (recordOptions: RecordOptions) => window.useRecord.startRecord(recordOptions),
+    onStartRecord: (recordOptions: RecordOptions) => window.useRecord.startRecord(recordOptions),
     // 当点击停止录制的时候 调用 useRecord.stopRecord 方法
     onStopRecord: (callback: () => void) => {
       window.useRecord.onCloseWin(msg => {

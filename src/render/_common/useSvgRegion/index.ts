@@ -16,7 +16,7 @@ interface RegionLifeCycle {
   winOnHide: () => void
   winOnShow: () => void
   // 开始录制 与 停止录制
-  onStrartRecord: (recordOptions: RecordOptions) => Promise<any>
+  onStartRecord: (recordOptions: RecordOptions) => Promise<any>
   onStopRecord: (callback: () => void) => void
   // 当成功开始录制之后
   onStartRecordSuccess: () => void
@@ -326,7 +326,7 @@ export function useSvgRegion(regionLifeCycle: RegionLifeCycle) {
         drag.setAttribute('stroke', 'transparent')
 
         // 开始录制
-        regionLifeCycle.onStrartRecord(recordOptions)
+        regionLifeCycle.onStartRecord(recordOptions)
           .then(() => {
             // 首先根据全屏录制还是区域录制来判断是否需要隐藏窗口
             if (currentRecorderType.value === 'window') {
