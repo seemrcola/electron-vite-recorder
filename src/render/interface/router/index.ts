@@ -4,7 +4,7 @@ import routes from './routes'
 const baseRoutes = [
   {
     path: '/',
-    redirect: '/clip',
+    redirect: '/home',
   },
 ]
 

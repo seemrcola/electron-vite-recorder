@@ -35,8 +35,8 @@ export async function useInterfaceWindow() {
   const [width, height] = getSize()
 
   const childWindow = new BrowserWindow({
-    width: width * 0.8,
-    height: height * 0.7,
+    width: 800,
+    height: 600,
     alwaysOnTop: true,
     resizable: false,
     title: 'Recorder Interface',

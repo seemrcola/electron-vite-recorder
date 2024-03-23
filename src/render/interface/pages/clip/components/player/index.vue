@@ -35,8 +35,6 @@ function addVideoListener(video: HTMLVideoElement) {
   }
   video.ontimeupdate = () => {
     dragBarValue.value = video.currentTime
-    // 将这段动画做的丝滑一点
-    
   }
 }
 
@@ -80,23 +78,23 @@ onMounted(() => {
         class="moveUp"
         absolute w-full h-40px left-0 bottom-0
         bg="[rgba(0,0,0,0.7)]" text-light
-        flex items-center
+        flex items-center px-4 box-border
         @click.stop
       >
-        <div flex-center>
-          <div
-            v-show="playStatus"
-            w-8 h-8 text-light-3 cursor-pointer transition-300 hover="scale-105 text-blue-3"
-            class="i-material-symbols:pause-circle-outline"
-            @click="() => videoRef?.pause()"
-          />
-          <div w-4 />
-          <NSlider v-model:value="dragBarValue" w-100 :step="0.01" :min="0" :max="videoRef?.duration" />
-        </div>
+        <div
+          v-show="playStatus"
+          w-8 h-8 mr-4 text-light-3 
+          cursor-pointer transition-300 hover="scale-105 text-blue-3"
+          class="i-material-symbols:pause-circle-outline"
+          @click="() => videoRef?.pause()"
+        />
+        <NSlider 
+          disabled w-100 flex-1
+          v-model:value="dragBarValue" 
+          :step="0.01" :min="0" :max="videoRef?.duration" />
       </div>
     </div>
     <Ruler
-      v-if="0"
       mt-4
       :src="props.src" :name="props.name" :path="props.path"
       @update-time="updateTime"
