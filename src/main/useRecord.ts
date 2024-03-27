@@ -26,6 +26,7 @@ export async function useRecord(userClipWin: BrowserWindow, userRecorderWin: Bro
     const allWindows = BrowserWindow.getAllWindows()
     // 遍历所有窗口发送状态改变的消息
     allWindows.forEach((win) => {
+      console.log(win.title, '----')
       win.webContents.send('change-icon', false) // change-icon 的 msg 是 boolean
     })
   })

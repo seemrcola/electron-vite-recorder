@@ -18,7 +18,7 @@ onMounted(() => {
       })
     },
     // 当成功开始录制之后 我们需要更新图标 需要通知给圆形摄像头窗口和工具箱窗口
-    onStartRecordSuccess: () => window.useRecord.message({ type: 'change-icon', msg: 'recording' }),
+    onStartRecordSuccess: () => window.useRecord.message({ type: 'change-icon', msg: true }),
     // 当成功开始录制裁剪窗口之后 我们需要隐藏录屏窗口
     onStartClipRecordSuccess: () => window.useRecord.transparentClipWin(),
     // 当成功开始录制全屏窗口之后 我们需要隐藏录屏窗口并显示透明的裁剪窗口
