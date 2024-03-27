@@ -14,10 +14,10 @@ onMounted(() => {
     onStopRecord: (callback: () => void) => {
       window.useRecord.onCloseWin(msg => {
         console.log(msg)
-        callback() // 这个callback是用来处理内部的一些逻辑
+        callback() // 这个callback是这个hooks用来处理内部的一些逻辑 需要手动调用
       })
     },
-    // 当成功开始录制之后 我们需要更新图标
+    // 当成功开始录制之后 我们需要更新图标 需要通知给圆形摄像头窗口和工具箱窗口
     onStartRecordSuccess: () => window.useRecord.message({ type: 'change-icon', msg: 'recording' }),
     // 当成功开始录制裁剪窗口之后 我们需要隐藏录屏窗口
     onStartClipRecordSuccess: () => window.useRecord.transparentClipWin(),

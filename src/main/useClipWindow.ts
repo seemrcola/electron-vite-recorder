@@ -2,9 +2,6 @@ import { dirname, join } from 'node:path'
 import * as process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { BrowserWindow, screen } from 'electron'
-import { getPlatform } from './utils'
-
-const platform = getPlatform()
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)

@@ -1,5 +1,4 @@
-import type { BrowserWindow } from 'electron'
-import { ipcMain } from 'electron'
+import { ipcMain, BrowserWindow } from 'electron'
 import { useFFMPEG } from './useFFMPEG'
 
 const ffmpeg = useFFMPEG()
@@ -23,8 +22,12 @@ export async function useRecord(userClipWin: BrowserWindow, userRecorderWin: Bro
     userClipWin.setIgnoreMouseEvents(false)
     // 关闭窗口
     userClipWin.hide()
-    // 在进程成功关闭之后 通知icon改变 给user recorder渲染进程发送消息
-    userRecorderWin.webContents.send('change-icon', false)
+    // 获取所有窗口
+    const allWindows = BrowserWindow.getAllWindows()
+    // 遍历所有窗口发送状态改变的消息
+    allWindows.forEach((win) => {
+      win.webContents.send('change-icon', false) // change-icon 的 msg 是 boolean
+    })
   })
 
   ipcMain.handle('hide', () => {
@@ -41,8 +44,11 @@ export async function useRecord(userClipWin: BrowserWindow, userRecorderWin: Bro
     // 发送给 摄像头的渲染进程 改变icon状态
     console.log('message', type, msg)
     if (type === 'change-icon') {
-      // 给user recorder渲染进程发送消息
-      userRecorderWin.webContents.send('change-icon', msg as boolean) // change-icon 的 msg 是 boolean
+      // 遍历所有窗口发送状态改变的消息
+      const allWindows = BrowserWindow.getAllWindows()
+      allWindows.forEach((win) => {
+        win.webContents.send('change-icon', msg) // change-icon 的 msg 是 boolean
+      })
     }
   })
 }

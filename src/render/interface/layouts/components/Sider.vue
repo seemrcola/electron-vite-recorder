@@ -11,21 +11,21 @@ const router = useRouter()
       <template #trigger>
         <div class="i-icon-park:adobe-photoshop" w-6 h-6 cursor-pointer />
       </template>
-      剪辑
+      todo
     </NTooltip>
 
     <NTooltip placement="right">
       <template #trigger>
         <div class="i-icon-park:compression" w-6 h-6 my-4 cursor-pointer />
       </template>
-      压缩
+      todo
     </NTooltip>
 
     <NTooltip placement="right">
       <template #trigger>
         <div class="i-icon-park:file-settings" w-6 h-6 cursor-pointer />
       </template>
-      设置
+      todo
     </NTooltip>
   </div>
 </template>
