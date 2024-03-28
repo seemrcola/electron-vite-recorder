@@ -38,7 +38,6 @@ export async function useCanvasWindow() {
     width: 1000,
     height: 700,
     show: false,
-    frame: false,
     alwaysOnTop: true,
     resizable: false,
     title: 'Recorder Canvas',

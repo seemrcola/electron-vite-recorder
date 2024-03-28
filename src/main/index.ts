@@ -90,13 +90,13 @@ async function createWindow() {
   win.setAspectRatio(1)
   // drag
   useDrag(win)
-  useDrag(canvasWindow)
   // record
   useRecord(clipWindow)
   // canvasRecord
   useCanvasRecord(canvasWindow)
 
   if (process.env.VITE_DEV_SERVER_URL) {
+    console.log('Vite Dev Server URL:', url)
     await win.loadURL(url)
     win.webContents.openDevTools({ mode: 'detach' })
   }
