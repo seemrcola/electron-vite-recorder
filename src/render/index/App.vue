@@ -3,9 +3,13 @@ import { onMounted, ref } from 'vue'
 import UserMedia from './components/UserMedia.vue'
 import Settings from './components/Settings.vue'
 import RecordBar from './components/RecordBar.vue'
-import { useDrag } from './composables/useDrag'
+import { useDrag } from '../_common/useDrag'
 
-const { run } = useDrag()
+const { run } = useDrag({
+  afterDrag: ((opt: { x: number, y: number }) => {
+    window.useDrag.drag({ x: opt.x, y: opt.y })
+  })
+})
 
 const type = ref<'video' | 'settings'>('video')
 const showFooter = ref(false)

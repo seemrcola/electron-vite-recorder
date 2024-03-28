@@ -8,7 +8,7 @@ import { useInterfaceWindow } from './windows/useInterfaceWindow'
 import { useCanvasWindow } from './windows/useCanvasWindow'
 
 import { shim } from './utils/platform'
-import { useDrag } from './useDrag'
+import { useDrag, useCanvasDrag } from './useDrag'
 import { useRecord } from './useRecord'
 import { useCanvasRecord } from './useCanvasRecord'
 
@@ -90,6 +90,7 @@ async function createWindow() {
   win.setAspectRatio(1)
   // drag
   useDrag(win)
+  useCanvasDrag(canvasWindow)
   // record
   useRecord(clipWindow)
   // canvasRecord

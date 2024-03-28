@@ -2,7 +2,6 @@ import { ipcMain, BrowserWindow } from 'electron'
 
 export async function useCanvasRecord(canvasRecorderWin: BrowserWindow) {
   ipcMain.handle('canvas:start', () => {
-    console.log('start recording ---------')
     canvasRecorderWin.show()
   })
 

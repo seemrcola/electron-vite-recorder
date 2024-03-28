@@ -26,8 +26,10 @@ interface Window {
   }
   // expose in the `electron/preload/useDrag.ts`
   useDrag: {
-    drag: (opt: { x: number, y: number }) => void
+    'drag': (opt: { x: number, y: number }) => void,
+    'canvas:drag': (opt: { x: number, y: number }) => void,
   }
+
   // expose in the `electron/preload/useRecord.ts`
   useRecord: {
     'start': () => Promise<any> // 类似于 show

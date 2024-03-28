@@ -15,11 +15,17 @@ function rafDebounce(cb: () => void, queue: any[]) {
   })
 }
 
-export function useDrag() {
+interface DragLifecycles {
+  afterDrag: ({x, y}: { x: number; y: number }) => void
+}
+
+export function useDrag(options: DragLifecycles) {
   let startDragging = false
   let dragCoords = { x: 0, y: 0 }
   let deltaCoords = { x: 0, y: 0 }
   const queue: any[] = []
+
+  const { afterDrag } = options
 
   function run() {
     window.addEventListener('mousedown', start)
@@ -58,7 +64,8 @@ export function useDrag() {
   // send drag event to preload
   function use() {
     const { x, y } = deltaCoords
-    window.useDrag.drag({ x, y })
+    // window.useDrag.drag({ x, y })
+    afterDrag({ x, y })
   }
 
   return { run }
