@@ -3,6 +3,7 @@ import * as process from 'node:process'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import electron from 'vite-plugin-electron/simple'
+import VueDevTools from 'vite-plugin-vue-devtools'
 import UnoCss from 'unocss/vite'
 import pkg from './package.json'
 
@@ -17,6 +18,7 @@ export default defineConfig(({ command }) => {
     plugins: [
       vue(),
       UnoCss(),
+      // VueDevTools(),
       electron({
         main: {
           entry: 'src/main/index.ts',

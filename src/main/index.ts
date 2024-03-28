@@ -3,12 +3,14 @@ import * as process from 'node:process'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { BrowserWindow, app, ipcMain, screen, shell } from 'electron'
-import { useClipWindow } from './useClipWindow'
-import { useInterfaceWindow } from './useInterfaceWindow'
+import { useClipWindow } from './windows/useClipWindow'
+import { useInterfaceWindow } from './windows/useInterfaceWindow'
+import { useCanvasWindow } from './windows/useCanvasWindow'
 
-import { shim } from './utils'
+import { shim } from './utils/platform'
 import { useDrag } from './useDrag'
 import { useRecord } from './useRecord'
+import { useCanvasRecord } from './useCanvasRecord'
 
 import { setupApp } from './express-server'
 
@@ -80,14 +82,19 @@ async function createWindow() {
   // clipWindow
   const clipWindow = await useClipWindow()
   // interfaceWindow
-  useInterfaceWindow()
+  const interfaceWindow = await useInterfaceWindow()
+  // canvasWindow
+  const canvasWindow = await useCanvasWindow()
 
   // keep ratio
   win.setAspectRatio(1)
   // drag
   useDrag(win)
+  useDrag(canvasWindow)
   // record
-  useRecord(clipWindow, win)
+  useRecord(clipWindow)
+  // canvasRecord
+  useCanvasRecord(canvasWindow)
 
   if (process.env.VITE_DEV_SERVER_URL) {
     await win.loadURL(url)

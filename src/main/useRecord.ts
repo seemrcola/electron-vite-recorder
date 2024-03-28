@@ -1,10 +1,10 @@
 import { ipcMain, BrowserWindow } from 'electron'
-import { useFFMPEG } from './useFFMPEG'
+import { useFFMPEG } from './utils/useFFMPEG'
 
 const ffmpeg = useFFMPEG()
 
 // use ffmpeg to start recording
-export async function useRecord(userClipWin: BrowserWindow, userRecorderWin: BrowserWindow) {
+export async function useRecord(userClipWin: BrowserWindow) {
   ipcMain.handle('start', () => {
     userClipWin.show()
   })
@@ -26,7 +26,6 @@ export async function useRecord(userClipWin: BrowserWindow, userRecorderWin: Bro
     const allWindows = BrowserWindow.getAllWindows()
     // 遍历所有窗口发送状态改变的消息
     allWindows.forEach((win) => {
-      console.log(win.title, '----')
       win.webContents.send('change-icon', false) // change-icon 的 msg 是 boolean
     })
   })

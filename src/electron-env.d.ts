@@ -30,13 +30,21 @@ interface Window {
   }
   // expose in the `electron/preload/useRecord.ts`
   useRecord: {
-    start: () => Promise<any>
-    startRecord: (recordOptions: RecordOptions) => Promise<any>
-    stop: () => Promise<any>
-    hide: () => Promise<any>
-    message: ({ type: string, msg: any }) => Promise<void>
-    transparentClipWin: () => Promise<any>
-    onChangeIcon: (cb: (msg: any) => void) => void
-    onCloseWin: (cb: (msg: any) => void) => void
+    'start': () => Promise<any> // 类似于 show
+    'startRecord': (recordOptions: RecordOptions) => Promise<any>
+    'stop': () => Promise<any>
+    'hide': () => Promise<any>
+    'message': ({ type: string, msg: any }) => Promise<void>
+    'transparentClipWin': () => Promise<any>
+    'onChangeIcon': (cb: (msg: any) => void) => void
+    'onCloseWin': (cb: (msg: any) => void) => void
+  }
+  // expose in the `electron/preload/useCavansRecord.ts`
+
+  useCanvasRecord: {
+    'start': () => Promise<any> // 类似于 show
+    'startRecord': (recordOptions: RecordOptions) => Promise<any>
+    'stop': () => Promise<any>
+    'hide': () => Promise<any>
   }
 }

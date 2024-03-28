@@ -17,12 +17,19 @@ const config = ref<ConfigItem[]>([
 function handleClick(index: number) {
   const item = config.value[index]
   if(item.type ==='scrren') recordScreen(item)
+  if(item.type === 'canvas') recordCanvas(item)
 }
 
 function recordScreen(item: ConfigItem) {
   item.status 
    ? window.useRecord.stop() 
    : window.useRecord.start() 
+}
+
+function recordCanvas(item: ConfigItem) {
+  item.status 
+   ? window.useCanvasRecord.stop() 
+   : window.useCanvasRecord.start() 
 }
 
 const computedButtonDisabled = computed(() => (item: ConfigItem) => {
